@@ -1,7 +1,9 @@
 package com.banking.service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.springframework.ui.Model;
 
@@ -20,21 +22,21 @@ public class ViewService {
 	
 	public String views(List<String> views) {
 		clear();
-		viewList.addAll(views);
+		ListIterator<String> i = views.listIterator();
+		// add .jsp after each view of views
+		while(i.hasNext()) {
+			viewList.add(i.next()+".jsp");
+		}
 		return layoutContainer;
 	}
 	
 	public String view(String view) {
 		clear();
-		viewList.add(view);
+		// add .jsp after view
+		viewList.add(view+".jsp");
 		return layoutContainer;
 	}
-	
-	public String addViews(List<String> views) {
-		viewList.addAll(views);
-		return layoutContainer;
-	}
-	
+
 	public ViewService clear() {
 		viewList.clear();
 		return this;

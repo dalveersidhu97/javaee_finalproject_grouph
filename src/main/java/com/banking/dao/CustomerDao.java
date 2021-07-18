@@ -30,6 +30,7 @@ public class CustomerDao {
 	public static final int USER_ALREADY_EXISTS = -4;
 	public static final int EMAIL_ALREADY_EXISTS = -5;
 	public static final int USERNAME_ALREADY_EXISTS = -6;
+	public static final int NO_ROW_EFFECTED = -1;
 	
 	@Autowired
 	public EncryptionService enService;
@@ -57,7 +58,7 @@ public class CustomerDao {
 			if(template.update(sql)==1) {
 				sql = "select * from Customers where email = '"+r.getEmail()+"'";
 				c1 = getCustomer(sql);
-				sql = "INSERT INTO Login (cutomerID, username, password) Values ("+c1.getId()+", '"+r.getUsername()+"', '"+r.getPassword()+"');";
+				sql = "INSERT INTO Login (customerID, username, password) Values ("+c1.getId()+", '"+r.getUsername()+"', '"+r.getPassword()+"');";
 				// insert into Login
 				if(template.update(sql)==1)
 					return 1;
@@ -76,9 +77,8 @@ public class CustomerDao {
 			e.printStackTrace();
 			// roll back if there is any error
 			registerRollback(r);
-			return -1;
 		}
-		return -1;
+		return NO_ROW_EFFECTED;
 	}
 	
 	public void registerRollback(Register r) {
@@ -115,7 +115,7 @@ public class CustomerDao {
 				Login l=null;
 		    	if(rs.next()) {
 		    		l=new Login();
-			        l.setCustomerId(rs.getInt("cutomerID"));  
+			        l.setCustomerId(rs.getInt("customerID"));  
 			        l.setUsername(rs.getString("username"));  
 			        l.setPassword(rs.getString("password"));
 			    }
@@ -144,30 +144,31 @@ public class CustomerDao {
 		  });    
 	}
 	
-	public Customer validateUser(Login l) {
+	public Login validateLogin(Login l) {
 
-		String sql = "select * from Assignment4.User where username='" + l.getUsername() + "' and password='"
+		String sql = "select * from Login where username='" + l.getUsername() + "' and password='"
 				+ l.getPassword() + "';";
 		
 		try {
-			return template.query(sql, new ResultSetExtractor<Customer>() {
+			return template.query(sql, new ResultSetExtractor<Login>() {
 
-				public Customer extractData(ResultSet rs) throws SQLException, DataAccessException {
+				public Login extractData(ResultSet rs) throws SQLException, DataAccessException {
 					
-					Customer c = new Customer();
+					Login l = null;
 
-					rs.next();
-					c.setFirstName(rs.getString("firstname"));
-					c.setFirstName(rs.getString("lastname"));
-					c.setEmail(rs.getString("email"));
-					return c;
+					if(rs.next()) {
+						l = new Login();
+						l.setCustomerId(rs.getInt("customerID"));
+						l.setUsername(rs.getString("username"));
+						l.setPassword(rs.getString("password"));				
+					}
+					return l;
 				}
 			});
 		} catch (Exception  e) {
 			e.printStackTrace();
-			// null if there is any error
-			return null;
 		}
+		return null;
 	}
 
 }

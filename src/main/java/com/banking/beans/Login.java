@@ -1,9 +1,13 @@
 package com.banking.beans;
 
+import javax.validation.constraints.Size;
+
 public class Login {
 
 	private int customerId;
+	@Size(min=4, message="username must be greater than 4 characters.")
 	private String username;
+	@Size(min=3, message="password must be greater or equal to 8 characters.")
 	private String password;
 	
 	public int getCustomerId() {

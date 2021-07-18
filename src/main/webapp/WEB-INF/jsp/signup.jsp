@@ -28,6 +28,11 @@
 	<div>
 		<form:button id="register" name="register"> Register</form:button>
 	</div>
+	<form:errors path="username" />
+	<form:errors path="password" />
+	<form:errors path="firstName" />
+	<form:errors path="lastName" />
+	<form:errors path="email" />
 	<br>
 	<form:errors path="username" style="color:red;" />
 </form:form>

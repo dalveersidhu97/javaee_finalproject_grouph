@@ -1,5 +1,8 @@
 package com.banking.service;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.banking.beans.Customer;
@@ -17,9 +20,9 @@ import com.banking.dao.CustomerDao;
  */
 
 interface UserServiceInterface {
+	
 	int register(Register customer);
-
-	Customer validateUser(Login login);
+	Login validateLogin(Login login);
 }
 
 public class CustomerService implements UserServiceInterface {
@@ -42,13 +45,39 @@ public class CustomerService implements UserServiceInterface {
 		return customerDao.register(register);
 	}
 
-	public Customer validateUserToken(Login login) {
-		return customerDao.validateUser(login);
+	public Login validateLogin(Login login) {
+		// encrypting to match with the encrypted password in database
+		//login.setPassword(enService.encrypt(login.getPassword()));
+		return customerDao.validateLogin(login);
 	}
 
-	public Customer validateUser(Login login) {
-		// encrypting to match with the encrypted password in database
-		login.setPassword(enService.encrypt(login.getPassword()));
-		return validateUserToken(login);
+	public boolean isLoggedIn(HttpServletRequest request) {
+		
+		Cookie[] cookies = request.getCookies();
+		String username = null, password = null;
+		
+		for(Cookie cookie : cookies) {
+			
+			if(cookie.getName().equals("username"))
+				username = cookie.getValue();
+			if(cookie.getName().equals("password"))
+				password = cookie.getValue();
+		}
+		
+		
+		if(null==username || null==password || username.equals("") || password.equals("")) {
+			System.out.println("cookeis: not logged");
+			return false;
+		}
+		Login login = new Login();
+		login.setUsername(username);
+		login.setPassword(password);
+		
+		if(validateLogin(login)!=null)
+			return true;
+		
+		System.out.println("not logged in");
+		return false;
 	}
+
 }
