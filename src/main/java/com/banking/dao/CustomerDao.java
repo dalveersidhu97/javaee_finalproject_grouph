@@ -43,7 +43,7 @@ public class CustomerDao {
 		
 		// return if the email or user name already exists
 		
-		if(emailExists(r.getEmail())!=null)
+		if(emailExists(r.getEmail()) != null)
 			return EMAIL_ALREADY_EXISTS;
 		
 		if(usernameExists(r.getUsername())!=null)
@@ -66,6 +66,7 @@ public class CustomerDao {
 			
 			// roll back if there is any error
 			registerRollback(r);
+			e.printStackTrace();
 			return USER_ALREADY_EXISTS;
 			
 		} catch (Exception e) {
@@ -82,11 +83,11 @@ public class CustomerDao {
 		try {
 			template.execute("delete from Customers where email='"+r.getEmail()+"'");
 			template.execute("delete from Login where username='"+r.getUsername()+"'");
-		}catch(Exception e) {}
+		}catch(Exception e) {e.printStackTrace();}
 	}
 	
 	public Customer emailExists(String email) {
-		String sql = "select * from Customer where email = '"+email+"'";
+		String sql = "select * from Customers where email = '"+email+"';";
 		return template.query(sql,new ResultSetExtractor<Customer>(){
 			public Customer extractData(ResultSet rs) throws SQLException, DataAccessException {
 
@@ -105,14 +106,14 @@ public class CustomerDao {
 	}
 	
 	public Login usernameExists(String username) {
-		String sql = "select * from Login where username = '"+username+"'";
+		String sql = "select * from Login where username = '"+username+"';";
 		return template.query(sql,new ResultSetExtractor<Login>(){
 			public Login extractData(ResultSet rs) throws SQLException, DataAccessException {
 
 				Login l=null;
 		    	if(rs.next()) {
 		    		l=new Login();
-			        l.setCustomerId(rs.getInt("ID"));  
+			        l.setCustomerId(rs.getInt("cutomerID"));  
 			        l.setUsername(rs.getString("username"));  
 			        l.setPassword(rs.getString("password"));
 			    }

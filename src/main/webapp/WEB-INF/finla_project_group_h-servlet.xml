@@ -37,6 +37,9 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		<property name="dataSource" ref="ds"></property>
 	</bean>
 	
+	<bean id="viewService" class="com.banking.service.ViewService">
+		<property name="layoutContainer" value="layout"></property>
+	</bean>
 
 	<bean id="dao" class="com.banking.dao.CustomerDao">
 		<property name="template" ref="jt"></property>
