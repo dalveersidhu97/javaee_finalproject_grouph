@@ -18,6 +18,7 @@
      <c:forEach var = "view" items="${viewList}">
         <jsp:include page="${view}" />
      </c:forEach>
+     
   </div>
 </div>
 

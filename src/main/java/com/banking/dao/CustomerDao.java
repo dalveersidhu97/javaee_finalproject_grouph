@@ -40,14 +40,16 @@ public class CustomerDao {
 	
 	public int register(Register r) {
 		Customer c1 = null;
-		
+	
 		// return if the email or user name already exists
-		
-		if(emailExists(r.getEmail()) != null)
-			return EMAIL_ALREADY_EXISTS;
 		
 		if(usernameExists(r.getUsername())!=null)
 			return USERNAME_ALREADY_EXISTS;
+	
+		if(emailExists(r.getEmail()) != null)
+			return EMAIL_ALREADY_EXISTS;
+		
+		
 		
 		String sql = "INSERT INTO Customers (firstName, lastName, email) Values ('"+r.getFirstName()+"', '"+r.getLastName()+"', '"+r.getEmail()+"');";
 		try {

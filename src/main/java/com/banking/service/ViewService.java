@@ -1,7 +1,6 @@
 package com.banking.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.ui.Model;
@@ -31,7 +30,7 @@ public class ViewService {
 		return layoutContainer;
 	}
 	
-	public String addViews(List views) {
+	public String addViews(List<String> views) {
 		viewList.addAll(views);
 		return layoutContainer;
 	}

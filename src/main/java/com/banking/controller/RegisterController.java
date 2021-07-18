@@ -37,7 +37,7 @@ public class RegisterController {
 	public String processRegisteration(@ModelAttribute Register register, Model m) {
 		
 		int registerResutl = customerService.register(register);
-		String view = "signup";
+		String view = "signup.jsp";
 		String errorMessage = "";
 		
 		if(registerResutl == CustomerDao.EMAIL_ALREADY_EXISTS) {
@@ -51,7 +51,7 @@ public class RegisterController {
 		}
 		
 		if(registerResutl == 1) {
-			view = "home";
+			view = "home.jsp";
 		}
 		
 		m.addAttribute("errorMessage", errorMessage);
