@@ -40,15 +40,14 @@ public class RegisterController {
 		String view = "signup.jsp";
 		String errorMessage = "";
 		
-		if(registerResutl == CustomerDao.EMAIL_ALREADY_EXISTS) {
+		if(registerResutl == CustomerDao.EMAIL_ALREADY_EXISTS)
 			errorMessage = "This email has been already taken!";
-		}
-		if(registerResutl == CustomerDao.USERNAME_ALREADY_EXISTS) {
+		
+		if(registerResutl == CustomerDao.USERNAME_ALREADY_EXISTS)
 			errorMessage = "Username already taken!";
-		}
-		if(registerResutl == CustomerDao.USER_ALREADY_EXISTS) {
+		
+		if(registerResutl == CustomerDao.USER_ALREADY_EXISTS) 
 			errorMessage = "Customer already exists, please check your input!";
-		}
 		
 		if(registerResutl == 1) {
 			view = "home.jsp";
