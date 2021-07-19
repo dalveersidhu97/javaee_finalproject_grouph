@@ -59,7 +59,9 @@ public class RegisterController {
 			errorMessage = "Customer already exists, please check your input!";
 		
 		if(registerResutl == 1) {
-			view = "home";
+			m.addAttribute("message", "Registration successfull, You can login now!");
+			m.addAttribute("login", new Login());
+			view = "login";
 		}
 		
 		m.addAttribute("errorMessage", errorMessage);

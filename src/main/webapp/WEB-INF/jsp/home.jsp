@@ -29,7 +29,7 @@
 			
 		}
 	%>
-
-
+<br><br><br>
+<p><a href="./logout">Logout</a></p>
 
     

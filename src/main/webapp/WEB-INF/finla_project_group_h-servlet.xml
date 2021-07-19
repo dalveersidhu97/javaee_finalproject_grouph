@@ -48,6 +48,9 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	<bean id="accountDao" class="com.banking.dao.AccountDao">
 		<property name="template" ref="jt"></property>
 	</bean>
+	<bean id="transactionDao" class="com.banking.dao.TransactionDao">
+		<property name="template" ref="jt"></property>
+	</bean>
 	
 	<!-- Services -->
 	
@@ -58,6 +61,7 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	<bean id="utilityService" class="com.banking.service.UtilityService" />
 	<bean id="accountService" class="com.banking.service.AccountService" />
 	<bean id="encryptService" class="com.banking.service.EncryptionService" />
+	<bean id="transactionService" class="com.banking.service.TransactionService" />
 
  
 </beans>

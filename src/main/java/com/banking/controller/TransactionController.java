@@ -14,23 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.banking.beans.CategoryOption;
 import com.banking.beans.Login;
 import com.banking.beans.Register;
+import com.banking.beans.Transaction;
 import com.banking.beans.UtilityCategory;
 import com.banking.service.AccountService;
 import com.banking.service.CustomerService;
+import com.banking.service.TransactionService;
 import com.banking.service.UtilityService;
 import com.banking.service.ViewService;
 
-/**
- * 
- * @author Group-H
- * @date 12 July, 2021
- * @description Controller class for root routes such as '/', '/welcome',
- *              '/logout'. It checks if the user is logged In and serves the
- *              profile page or login page accordingly.
- */
-
 @Controller
-public class HomeController {
+public class TransactionController {
 	
 	@Autowired
 	ViewService viewService;
@@ -40,9 +33,11 @@ public class HomeController {
 	CustomerService customerService;
 	@Autowired
 	AccountService accountService;
+	@Autowired
+	TransactionService transactionService;
 	
-	@RequestMapping("/")
-	public String showHome(Model m, HttpServletRequest request) {
+	@RequestMapping("/transactionProcess")
+	public String processTransaction(Model m, HttpServletRequest request) {
 		
 		// show home if the user is logged in
 		Login l = customerService.isLoggedIn(request);
@@ -53,13 +48,23 @@ public class HomeController {
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
 		}
 		
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
-		m.addAttribute("accountsList", accountService.getAccountsList(l));
+		// create pending transaction
+		Transaction transaction = transactionService.validateTransaction(request, l);
+		
+		if(transaction == null)
+			System.out.println("null");
+		else
+			System.out.println("not null");
+			
+		// store data in session
+		request.getSession().setAttribute("transaction", transaction);
+		// show confirm transaction page
+		
 		return viewService.model(m).view("home");
 	}
 	
-	@RequestMapping("/categories/{categoryName}")
-	public String showHome(Model m, HttpServletRequest request, @PathVariable String categoryName) {
+	@RequestMapping("/confirmTransaction")
+	public String confirmTransaction(Model m, HttpServletRequest request) {
 		
 		// show home if the user is logged in
 		Login l = customerService.isLoggedIn(request);
@@ -70,14 +75,13 @@ public class HomeController {
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
 		}
 		
-		String category = String.join(" ", categoryName.split("-"));
-		m.addAttribute("categoryName", category);
-		m.addAttribute("optionsList", utilityService.getCategoryOptionsList(category));
-		m.addAttribute("accountsList", accountService.getAccountsList(l));
+		// commit transaction
 		
-		return viewService.model(m).view("transaction");
-		
+		// show success or fail
 
+		return viewService.model(m).view("home");
 	}
+	
+	
 
 }

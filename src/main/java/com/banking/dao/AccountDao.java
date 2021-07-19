@@ -4,10 +4,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.banking.beans.Account;
+import com.banking.beans.Customer;
 import com.banking.beans.Login;
 
 public class AccountDao {
@@ -30,6 +33,17 @@ public class AccountDao {
 				 return ac;
 		    }  
 		 });
+	}
+	
+	public float getAccountBalance(Login l, int accountId) {
+		String sql = "select * from Accounts where customerID = "+l.getCustomerId()+" and ID="+accountId+";";
+		return template.query(sql,new ResultSetExtractor<Float>(){
+			public Float extractData(ResultSet rs) throws SQLException, DataAccessException {
+		    	if(rs.next())
+		    		return rs.getFloat("balance");
+		    	return null;
+		     } 	 
+		  });
 	}
 
 	public JdbcTemplate getTemplate() {

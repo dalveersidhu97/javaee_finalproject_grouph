@@ -24,4 +24,5 @@
 </form:form>
 <br>
 <center>${errorMessage}</center>
+<center>${message}</center>
 

@@ -22,9 +22,9 @@ import com.banking.dao.*;
 interface AccountServiceInterface {
 	
 	List<Account> getAccountsList(Login l);
+	float getAccountBalance(Login l, int accountId);
 	Account deposit(Account ac);
 	Account deduct(Account ac);
-	Account withdraw();
 	Account transferToSelf();
 	Account transferToOther();
 	
@@ -49,11 +49,6 @@ public class AccountService implements AccountServiceInterface {
 		return null;
 	}
 
-	public Account withdraw() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public Account transferToSelf() {
 		// TODO Auto-generated method stub
 		return null;
@@ -62,6 +57,10 @@ public class AccountService implements AccountServiceInterface {
 	public Account transferToOther() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public float getAccountBalance(Login l, int accountId) {
+		return accountDao.getAccountBalance(l, accountId);
 	}
 
 	
