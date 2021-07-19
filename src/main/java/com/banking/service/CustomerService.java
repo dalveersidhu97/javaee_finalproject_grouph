@@ -50,8 +50,8 @@ public class CustomerService implements UserServiceInterface {
 		//login.setPassword(enService.encrypt(login.getPassword()));
 		return customerDao.validateLogin(login);
 	}
-
-	public boolean isLoggedIn(HttpServletRequest request) {
+	
+	public Login isLoggedIn(HttpServletRequest request) {
 		
 		Cookie[] cookies = request.getCookies();
 		String username = null, password = null;
@@ -67,17 +67,17 @@ public class CustomerService implements UserServiceInterface {
 		
 		if(null==username || null==password || username.equals("") || password.equals("")) {
 			System.out.println("cookeis: not logged");
-			return false;
+			return null;
 		}
 		Login login = new Login();
 		login.setUsername(username);
 		login.setPassword(password);
-		
-		if(validateLogin(login)!=null)
-			return true;
+		Login l = validateLogin(login);
+		if(l!=null)
+			return l;
 		
 		System.out.println("not logged in");
-		return false;
+		return null;
 	}
 
 }

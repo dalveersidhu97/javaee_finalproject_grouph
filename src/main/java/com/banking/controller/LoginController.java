@@ -29,7 +29,8 @@ public class LoginController {
 	@RequestMapping("/login")
 	public String showLogin(Model m, HttpServletRequest request) {
 		
-		if(customerService.isLoggedIn(request))
+		Login l = customerService.isLoggedIn(request);
+		if(l==null) 
 			// redirect to home if already logged in
 			return "redirect:/";
 		
@@ -41,7 +42,8 @@ public class LoginController {
 	public String logout(Model m, HttpServletResponse response) {
 		// logout and redirect to home
 		response.addCookie(new Cookie("username", ""));
-		response.addCookie(new Cookie("password", ""));
+		response.addCookie(new Cookie("customerId", ""));
+		response.addCookie(new Cookie("custo", ""));
 		return "redirect:/";
 		
 	}
@@ -50,10 +52,6 @@ public class LoginController {
 	public String processLogin(@Valid @ModelAttribute Login l, BindingResult br, Model m, HttpServletResponse response, HttpServletRequest request) {
 		
 		String view = "login";
-		
-		if(customerService.isLoggedIn(request))
-			// redirect to home if already logged in
-			return "redirect:/";
 		
 		if(br.hasErrors()) 
 			return viewService.model(m).view(view);
@@ -69,6 +67,7 @@ public class LoginController {
 		// set cookies
 		
 		response.addCookie(new Cookie("username", login.getUsername()));
+		response.addCookie(new Cookie("customerId", String.valueOf(login.getCustomerId())));
 		response.addCookie(new Cookie("password", login.getPassword()));
 		
 		// redirect to home if login is success

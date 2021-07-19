@@ -37,20 +37,27 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		<property name="dataSource" ref="ds"></property>
 	</bean>
 	
+	<!-- DAOs -->
+	
+	<bean id="customerDao" class="com.banking.dao.CustomerDao">
+		<property name="template" ref="jt"></property>
+	</bean>
+	<bean id="utilityDao" class="com.banking.dao.UtilityDao">
+		<property name="template" ref="jt"></property>
+	</bean>
+	<bean id="accountDao" class="com.banking.dao.AccountDao">
+		<property name="template" ref="jt"></property>
+	</bean>
+	
+	<!-- Services -->
+	
 	<bean id="viewService" class="com.banking.service.ViewService">
 		<property name="layoutContainer" value="layout"></property>
 	</bean>
-
-	<bean id="dao" class="com.banking.dao.CustomerDao">
-		<property name="template" ref="jt"></property>
-	</bean>
-
-	<bean id="userService" class="com.banking.service.CustomerService">
-	</bean>
-
-	<bean id="encryptService"
-		class="com.banking.service.EncryptionService">
-	</bean>
+	<bean id="cutomerService" class="com.banking.service.CustomerService" />
+	<bean id="utilityService" class="com.banking.service.UtilityService" />
+	<bean id="accountService" class="com.banking.service.AccountService" />
+	<bean id="encryptService" class="com.banking.service.EncryptionService" />
 
  
 </beans>
