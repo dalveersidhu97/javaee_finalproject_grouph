@@ -102,11 +102,10 @@ public class TransactionService implements TransactionServiceInterface{
 		return false;
 	}
 	
-	public Transaction validateSelftTransfer(HttpServletRequest request, Login l) {
-		
+	public Transaction validateTransfer(HttpServletRequest request, Login l, int toAccountId) {
 		// verify fromAccount balance and toAcount account
 		Account fromAccount = accountService.getSelfAccount(l, Integer.parseInt((String)request.getParameter("fromAccountId")));
-		Account toAccount = accountService.getAccount(Integer.parseInt((String)request.getParameter("toAccountId")));
+		Account toAccount = accountService.getAccount(toAccountId);
 		
 		if(fromAccount==null || toAccount==null)
 			return null;
@@ -125,6 +124,11 @@ public class TransactionService implements TransactionServiceInterface{
 		return pendingDeduct;
 	}
 	
+	public Transaction validateSelftTransfer(HttpServletRequest request, Login l) {
+		int toAccountId = Integer.parseInt(request.getParameter("toAccountId"));		
+		return validateTransfer(request, l, toAccountId);
+	}
+	
 	public boolean finaliseTransferDeposite(HttpServletRequest request) {
 		
 		int toAccountId = (Integer)request.getSession().getAttribute("toAccountId");
@@ -134,7 +138,7 @@ public class TransactionService implements TransactionServiceInterface{
 		// create second pending transaction
 		Transaction t2 = new Transaction();
 		t2.setAmount(-t1.getAmount());
-		t2.setRemark(t1.getRemark()+" deposite");
+		t2.setRemark(t1.getRemark());
 		t2.setFromAccountId(toAccount.getId());
 		t2.setCustomerId(customerService.getCustomerFromAccountId(toAccount.getCustomerId()).getId());
 		Transaction pendingDeposit = createPendingTransaction(t2);

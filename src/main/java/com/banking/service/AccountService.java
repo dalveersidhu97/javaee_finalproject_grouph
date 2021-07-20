@@ -68,7 +68,9 @@ public class AccountService implements AccountServiceInterface {
 	public boolean isSelfAccount(Login l, int accountId) {
 		return (getSelfAccount(l, accountId)==null)?false:true;
 	}
-	
+	public Account getCustomerAccount(String emailOrAccountId, String type) {
+		return accountDao.getCustomerAccount(emailOrAccountId, type);
+	}
 	public Account getAccount(int accountId) {
 		return accountDao.getAccount(accountId);
 	}

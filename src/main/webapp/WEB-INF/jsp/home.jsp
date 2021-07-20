@@ -23,6 +23,7 @@
 <h2>Services</h2>
 	
 	<h2><a href='./transfer/self'>Self transfer</a></h2>
+	<h2><a href='./transfer/by-email'>Transfer by Email</a></h2>
 
 	<%
 		for(UtilityCategory uc : (List<UtilityCategory>)request.getAttribute("categoriesList")){

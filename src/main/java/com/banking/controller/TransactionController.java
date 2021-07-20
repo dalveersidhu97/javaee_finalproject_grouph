@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.banking.beans.Account;
 import com.banking.beans.CategoryOption;
 import com.banking.beans.Login;
 import com.banking.beans.Register;
@@ -76,6 +77,40 @@ public class TransactionController {
 		
 		// create pending transactions
 		Transaction transaction = transactionService.validateSelftTransfer(request, l);
+		
+		if(transaction== null) {
+			m.addAttribute("status", "transfer fail");
+			return viewService.model(m).view("transactionStatus");
+		}
+
+		// store data in session
+		request.getSession().setAttribute("transaction", transaction);
+		
+		// show confirm transaction page
+		return "redirect:/transfer-transaction-status";
+	}
+	
+	@RequestMapping("/emailTransferProcess")
+	public String processEmailTransfer(Model m, HttpServletRequest request) {
+		
+		// show home if the user is logged in
+		Login l = customerService.isLoggedIn(request);
+		if(l==null) {
+			// else show login page
+			m.addAttribute("login", new Login());
+			m.addAttribute("register", new Register());
+			return viewService.model(m).views(Arrays.asList("login", "signup"));
+		}
+		
+		String emailOrAccountId = request.getParameter("eamilOrAccountId").trim();
+		
+		Account account = accountService.getCustomerAccount(emailOrAccountId, "Savings");
+		if(account==null) {
+			m.addAttribute("errorMessage", "Invalid email or account number");
+			return "redirect:/transfer/by-email";
+		}
+		// create pending transactions
+		Transaction transaction = transactionService.validateTransfer(request, l, account.getId());
 		
 		if(transaction== null) {
 			m.addAttribute("status", "transfer fail");

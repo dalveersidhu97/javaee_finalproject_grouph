@@ -56,8 +56,7 @@ public class AccountDao {
 		 });
 	}
 	
-	public Account getAccount(Login l, int accountId) {
-		String sql = "select * from Accounts where customerID = "+l.getCustomerId()+" and ID="+accountId+";";
+	public Account getAccount(String sql) {
 		return template.query(sql,new ResultSetExtractor<Account>(){
 			public Account extractData(ResultSet rs) throws SQLException, DataAccessException {
 		    	if(rs.next()) {
@@ -74,22 +73,23 @@ public class AccountDao {
 		  });
 	}
 	
+	public Account getAccount(Login l, int accountId) {
+		String sql = "select * from Accounts where customerID = "+l.getCustomerId()+" and ID="+accountId+";";
+		return getAccount(sql);
+	}
+	
 	public Account getAccount(int accountId) {
 		String sql = "select * from Accounts where ID="+accountId+";";
-		return template.query(sql,new ResultSetExtractor<Account>(){
-			public Account extractData(ResultSet rs) throws SQLException, DataAccessException {
-		    	if(rs.next()) {
-		    		Account ac = new Account();
-		    		ac.setId(rs.getInt("ID"));
-		    		ac.setCustomerId(rs.getInt("customerID"));
-		    		ac.setType(rs.getString("accountType"));
-		    		ac.setActive(rs.getBoolean("isActive"));
-		    		ac.setBalance(rs.getFloat("balance"));
-		    		return ac;
-		    	}
-		    	return null;
-		     } 	 
-		  });
+		return getAccount(sql);
+	}
+	
+	public Account getCustomerAccount(String emailOrAccountId, String type) {
+		String sql = "select * from Accounts a inner join Customers c on c.ID=a.customerID where accountType='"+type+"' and ( c.email='"+emailOrAccountId+"' or a.ID='"+emailOrAccountId+"');";
+		return getAccount(sql);
+	}
+	public Account getCustomerAccount(int customerId, String type) {
+		String sql = "select * from Accounts a inner join Customers c on c.ID=a.customerID where c.ID="+customerId+";";
+		return getAccount(sql);
 	}
 	
 	public boolean updateBalanceBy(float amount, int accountId) {
