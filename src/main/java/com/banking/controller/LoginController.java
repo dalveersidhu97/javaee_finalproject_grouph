@@ -43,7 +43,7 @@ public class LoginController {
 		// logout and redirect to home
 		response.addCookie(new Cookie("username", ""));
 		response.addCookie(new Cookie("customerId", ""));
-		response.addCookie(new Cookie("custo", ""));
+		response.addCookie(new Cookie("password", ""));
 		return "redirect:/";
 		
 	}
@@ -67,6 +67,7 @@ public class LoginController {
 		// set cookies
 		
 		response.addCookie(new Cookie("username", login.getUsername()));
+		response.addCookie(new Cookie("firstname", customerService.getCustomer(l).getFirstName()));
 		response.addCookie(new Cookie("customerId", String.valueOf(login.getCustomerId())));
 		response.addCookie(new Cookie("password", login.getPassword()));
 		

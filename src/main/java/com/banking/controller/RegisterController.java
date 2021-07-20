@@ -57,6 +57,8 @@ public class RegisterController {
 		
 		if(registerResutl == CustomerDao.USER_ALREADY_EXISTS) 
 			errorMessage = "Customer already exists, please check your input!";
+		if(registerResutl == CustomerDao.NO_ROW_EFFECTED)
+			errorMessage = "An error has accured! Please try again.";
 		
 		if(registerResutl == 1) {
 			m.addAttribute("message", "Registration successfull, You can login now!");

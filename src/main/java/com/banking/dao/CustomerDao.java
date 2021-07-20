@@ -34,6 +34,8 @@ public class CustomerDao {
 	
 	@Autowired
 	public EncryptionService enService;
+	@Autowired
+	public AccountDao accountDao;
 
 	public void setTemplate(JdbcTemplate template) {
 		this.template = template;
@@ -43,48 +45,51 @@ public class CustomerDao {
 		Customer c1 = null;
 	
 		// return if the email or user name already exists
-		
 		if(usernameExists(r.getUsername())!=null)
 			return USERNAME_ALREADY_EXISTS;
 	
 		if(emailExists(r.getEmail()) != null)
 			return EMAIL_ALREADY_EXISTS;
 		
-		
-		
 		String sql = "INSERT INTO Customers (firstName, lastName, email) Values ('"+r.getFirstName()+"', '"+r.getLastName()+"', '"+r.getEmail()+"');";
 		try {
 			// insert into Customers 
 			if(template.update(sql)==1) {
+				
 				sql = "select * from Customers where email = '"+r.getEmail()+"'";
 				c1 = getCustomer(sql);
 				sql = "INSERT INTO Login (customerID, username, password) Values ("+c1.getId()+", '"+r.getUsername()+"', '"+r.getPassword()+"');";
+				
 				// insert into Login
-				if(template.update(sql)==1)
-					return 1;
-				// roll back if there is any error
-				registerRollback(r);
+				if(template.update(sql)!=1) {
+					// roll back if there is any error
+					registerRollback(r);
+					return NO_ROW_EFFECTED;
+				}
+				// create saving and credit account with zero initial balance
+				if(!accountDao.createAccounts(c1, new String[]{"Savings", "Credit"}, new  float[] {0, 0})) {
+					registerRollback(r);
+					return NO_ROW_EFFECTED;
+				}
+				return 1;
 			}
 		} catch (DuplicateKeyException e) {
-			
 			// roll back if there is any error
 			registerRollback(r);
 			e.printStackTrace();
 			return USER_ALREADY_EXISTS;
 			
 		} catch (Exception e) {
-			
 			e.printStackTrace();
 			// roll back if there is any error
-			registerRollback(r);
 		}
+		registerRollback(r);
 		return NO_ROW_EFFECTED;
 	}
 	
 	public void registerRollback(Register r) {
 		try {
 			template.execute("delete from Customers where email='"+r.getEmail()+"'");
-			template.execute("delete from Login where username='"+r.getUsername()+"'");
 		}catch(Exception e) {e.printStackTrace();}
 	}
 	
@@ -142,6 +147,14 @@ public class CustomerDao {
 		     } 	 
 			 
 		  });    
+	}
+	
+	public Customer getCustomerFromAccountId(int accountId) {
+		return getCustomer("select * from Customers c inner join Accounts a on c.ID=a.customerID where a.customerID = "+accountId);
+	}
+	
+	public Customer getCustomer(Login l) {
+		return getCustomer("select * from Customers c inner join Login l on l.customerID=c.ID where username = '"+l.getUsername()+"' and password='"+l.getPassword()+"';");
 	}
 	
 	public Login validateLogin(Login l) {

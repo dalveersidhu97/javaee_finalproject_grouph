@@ -33,6 +33,8 @@ interface AccountServiceInterface {
 public class AccountService implements AccountServiceInterface {
 	@Autowired
 	public AccountDao accountDao;
+	@Autowired
+	public TransactionService tService;
 
 	public List<Account> getAccountsList(Login l) {
 		// TODO Auto-generated method stub
@@ -59,10 +61,24 @@ public class AccountService implements AccountServiceInterface {
 		return null;
 	}
 
-	public float getAccountBalance(Login l, int accountId) {
-		return accountDao.getAccountBalance(l, accountId);
+	public boolean isAccount(int accountId) {
+		return (getAccount(accountId)==null)?false:true;
 	}
-
 	
+	public boolean isSelfAccount(Login l, int accountId) {
+		return (getSelfAccount(l, accountId)==null)?false:true;
+	}
+	
+	public Account getAccount(int accountId) {
+		return accountDao.getAccount(accountId);
+	}
+	
+	public Account getSelfAccount(Login l, int accountId) {
+		return accountDao.getAccount(l, accountId);
+	}
+	
+	public float getAccountBalance(Login l, int accountId) {
+		return accountDao.getAccount(l, accountId).getBalance();
+	}
 
 }

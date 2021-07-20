@@ -5,7 +5,6 @@ public class Account {
 	private int id;
 	private int customerId;
 	private String type;
-	private String number;
 	private float balance;
 	private boolean isActive;
 	
@@ -27,12 +26,7 @@ public class Account {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String getNumber() {
-		return number;
-	}
-	public void setNumber(String number) {
-		this.number = number;
-	}
+	
 	public float getBalance() {
 		return balance;
 	}

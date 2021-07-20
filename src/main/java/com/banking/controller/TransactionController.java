@@ -49,21 +49,74 @@ public class TransactionController {
 		}
 		
 		// create pending transaction
-		Transaction transaction = transactionService.validateTransaction(request, l);
+		Transaction transaction = transactionService.validateTransaction(request, l, m, request.getParameter("categoryName"));
 		
-		if(transaction == null)
-			System.out.println("null");
-		else
-			System.out.println("not null");
-			
+		if(transaction == null) {
+			return "redirect:/categories/"+String.join(" ", request.getParameter("categoryName").split("-"));
+		}
+
 		// store data in session
 		request.getSession().setAttribute("transaction", transaction);
-		// show confirm transaction page
 		
-		return viewService.model(m).view("home");
+		// show confirm transaction page
+		return "redirect:/transaction-status";
 	}
 	
-	@RequestMapping("/confirmTransaction")
+	@RequestMapping("/transferProcess")
+	public String processTransfer(Model m, HttpServletRequest request) {
+		
+		// show home if the user is logged in
+		Login l = customerService.isLoggedIn(request);
+		if(l==null) {
+			// else show login page
+			m.addAttribute("login", new Login());
+			m.addAttribute("register", new Register());
+			return viewService.model(m).views(Arrays.asList("login", "signup"));
+		}
+		
+		// create pending transactions
+		Transaction transaction = transactionService.validateSelftTransfer(request, l);
+		
+		if(transaction== null) {
+			m.addAttribute("status", "transfer fail");
+			return viewService.model(m).view("transactionStatus");
+		}
+
+		// store data in session
+		request.getSession().setAttribute("transaction", transaction);
+		
+		// show confirm transaction page
+		return "redirect:/transfer-transaction-status";
+	}
+	
+	@RequestMapping("/transfer-transaction-status")
+	public String confirmTransferTransaction(Model m, HttpServletRequest request) {
+		
+		// show home if the user is logged in
+		Login l = customerService.isLoggedIn(request);
+		if(l==null) {
+			// else show login page
+			m.addAttribute("login", new Login());
+			m.addAttribute("register", new Register());
+			return viewService.model(m).views(Arrays.asList("login", "signup"));
+		}
+		
+		Transaction pendingDeduct = (Transaction)request.getSession().getAttribute("transaction");
+		
+		// show success or fail
+		if(!transactionService.finaliseTransaction(pendingDeduct)) {
+			m.addAttribute("status",  "transfer deduct fail");
+			return viewService.model(m).view("transactionStatus");
+		}
+		if(!transactionService.finaliseTransferDeposite(request)) {
+			m.addAttribute("status",  "transfer deposit fail");
+			return viewService.model(m).view("transactionStatus");
+		}
+		m.addAttribute("status",  "transfer success");
+		return viewService.model(m).view("transactionStatus");
+	}
+	
+	@RequestMapping("/transaction-status")
 	public String confirmTransaction(Model m, HttpServletRequest request) {
 		
 		// show home if the user is logged in
@@ -75,11 +128,16 @@ public class TransactionController {
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
 		}
 		
-		// commit transaction
+		// finalise transaction
+		boolean isSuccessful = transactionService.finaliseTransaction((Transaction)request.getSession().getAttribute("transaction"));
 		
 		// show success or fail
-
-		return viewService.model(m).view("home");
+		if(isSuccessful)
+			m.addAttribute("status", "success");
+		else
+			m.addAttribute("status", "fail");
+		
+		return viewService.model(m).view("transactionStatus");
 	}
 	
 	

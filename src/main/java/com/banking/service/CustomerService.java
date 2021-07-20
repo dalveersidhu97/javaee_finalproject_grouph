@@ -23,6 +23,8 @@ interface UserServiceInterface {
 	
 	int register(Register customer);
 	Login validateLogin(Login login);
+	Customer getCustomer(Login login);
+	Customer getCustomerFromAccountId(int id);
 }
 
 public class CustomerService implements UserServiceInterface {
@@ -78,6 +80,15 @@ public class CustomerService implements UserServiceInterface {
 		
 		System.out.println("not logged in");
 		return null;
+	}
+
+	public Customer getCustomer(Login login) {
+		return customerDao.getCustomer(login);
+	}
+
+	public Customer getCustomerFromAccountId(int id) {
+		// TODO Auto-generated method stub
+		return customerDao.getCustomerFromAccountId(id);
 	}
 
 }
