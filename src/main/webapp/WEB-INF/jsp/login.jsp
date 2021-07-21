@@ -3,20 +3,19 @@
 <h2>Login</h2>
 <form:form class="form" id="loginForm" modelAttribute="login"
 	action="loginProcess" method="post">
-	<div>
+	<div class="form-group">
 		<form:label path="username"> Username: </form:label>
-		</td>
-		<form:input path="username" name="username" id="username" />
+		<form:input path="username" class="form-control" name="username" id="username" />
 	</div>
-	<div>
+	<div class="form-group">
 		<form:label path="password"> Password:</form:label>
-		<form:password path="password" name="password" id="password" />
+		<form:password path="password" class="form-control" name="password" id="password" />
 	</div>
-	<div>
-		<form:button id="login" name="login">Login</form:button>
+	<div class="form-group">
+		<form:button id="login" class="form-control" name="login">Login</form:button>
 	</div>
 
-	<div>
+	<div class="form-group">
 		<form:errors path="username" />
 		<form:errors path="password" />
 	</div>
