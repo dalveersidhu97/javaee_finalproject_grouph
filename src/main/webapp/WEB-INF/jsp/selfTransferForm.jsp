@@ -14,7 +14,7 @@
 		  <option value="">- select to account</option>
 	<%
 	for(Account ac : (List<Account>)request.getAttribute("accountsList")){
-		String account = ac.getId()+" (" + ac.getBalance()+")";
+		String account = ac.getType()+"-"+ac.getId()+" (" + ac.getBalance()+")";
 		out.print("<option value='"+ac.getId()+"'>"+account);
 	}
 	out.print("</option></select></div>");
