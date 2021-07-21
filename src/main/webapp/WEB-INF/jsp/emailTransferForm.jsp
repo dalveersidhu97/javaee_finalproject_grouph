@@ -5,17 +5,8 @@
 <h2>Email transfer</h2>
 
 <form class="form" id="regForm" action="../emailTransferProcess" method="post">
-	<div>
-		<label>From account</label>
-		<select name="accountId" id="accountId">
-		  <option value="">- select from account</option>
-	<%
-	for(Account ac : (List<Account>)request.getAttribute("accountsList")){
-		String account = ac.getId()+" (" + ac.getBalance()+")";
-		out.print("<option value='"+ac.getId()+"'>"+account);
-	}
-	out.print("</option></select></div>");
-	%>
+		  
+ 	<jsp:include page="fromAccount.jsp"></jsp:include>
 
 	<div>
 		<label>Enter email Id or account number of the receiver</label>

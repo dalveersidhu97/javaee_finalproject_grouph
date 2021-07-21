@@ -67,7 +67,7 @@ public class CustomerDao {
 					return NO_ROW_EFFECTED;
 				}
 				// create saving and credit account with zero initial balance
-				if(!accountDao.createAccounts(c1, new String[]{"Savings", "Credit"}, new  float[] {0, 0})) {
+				if(!accountDao.createAccounts(c1, new String[]{"Chequing", "Savings", "Credit"}, new  float[] {0, 0, (float) 1000.00})) {
 					registerRollback(r);
 					return NO_ROW_EFFECTED;
 				}
@@ -95,42 +95,30 @@ public class CustomerDao {
 	
 	public Customer emailExists(String email) {
 		String sql = "select * from Customers where email = '"+email+"';";
-		return template.query(sql,new ResultSetExtractor<Customer>(){
-			public Customer extractData(ResultSet rs) throws SQLException, DataAccessException {
-
-		    	Customer c=null;
-		    	if(rs.next()) {
-		    		c=new Customer();
-			        c.setId(rs.getInt("ID"));  
-			        c.setFirstName(rs.getString("firstname"));  
-			        c.setLastName(rs.getString("lastname"));
-			        c.setEmail(rs.getString("email"));
-			    }
-		    	return c;
-		     } 	 
-			 
-		  });
+		return getCustomer(sql);
 	}
 	
 	public Login usernameExists(String username) {
 		String sql = "select * from Login where username = '"+username+"';";
-		return template.query(sql,new ResultSetExtractor<Login>(){
-			public Login extractData(ResultSet rs) throws SQLException, DataAccessException {
-
-				Login l=null;
-		    	if(rs.next()) {
-		    		l=new Login();
-			        l.setCustomerId(rs.getInt("customerID"));  
-			        l.setUsername(rs.getString("username"));  
-			        l.setPassword(rs.getString("password"));
-			    }
-		    	return l;
-		     } 	 
-			 
-		  });
+		return getLogin(sql);
 		
 	}
 	
+	public Customer getCustomerFromAccountId(int accountId) {
+		return getCustomer("select * from Customers c inner join Accounts a on c.ID=a.customerID where a.ID = "+accountId);
+	}
+	
+	public Customer getCustomer(Login l) {
+		return getCustomer("select * from Customers c inner join Login l on l.customerID=c.ID where username = '"+l.getUsername()+"' and password='"+l.getPassword()+"';");
+	}
+	
+	public Login validateLogin(Login l) {
+		String sql = "select * from Login where username='" + l.getUsername() + "' and password='"
+				+ l.getPassword() + "';";
+		return getLogin(sql);
+	}
+	
+
 	public Customer getCustomer(String sql){  
 		 return template.query(sql,new ResultSetExtractor<Customer>(){
 			public Customer extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -149,33 +137,18 @@ public class CustomerDao {
 		  });    
 	}
 	
-	public Customer getCustomerFromAccountId(int accountId) {
-		return getCustomer("select * from Customers c inner join Accounts a on c.ID=a.customerID where a.ID = "+accountId);
-	}
-	
-	public Customer getCustomer(Login l) {
-		return getCustomer("select * from Customers c inner join Login l on l.customerID=c.ID where username = '"+l.getUsername()+"' and password='"+l.getPassword()+"';");
-	}
-	
-	public Login validateLogin(Login l) {
-
-		String sql = "select * from Login where username='" + l.getUsername() + "' and password='"
-				+ l.getPassword() + "';";
-		
+	public Login getLogin(String sql) {
 		try {
 			return template.query(sql, new ResultSetExtractor<Login>() {
-
 				public Login extractData(ResultSet rs) throws SQLException, DataAccessException {
-					
-					Login l = null;
-
 					if(rs.next()) {
-						l = new Login();
+						Login l = new Login();
 						l.setCustomerId(rs.getInt("customerID"));
 						l.setUsername(rs.getString("username"));
-						l.setPassword(rs.getString("password"));				
+						l.setPassword(rs.getString("password"));
+						return l;
 					}
-					return l;
+					return null;
 				}
 			});
 		} catch (Exception  e) {
@@ -183,5 +156,5 @@ public class CustomerDao {
 		}
 		return null;
 	}
-
+	
 }

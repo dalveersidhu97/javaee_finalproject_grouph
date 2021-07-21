@@ -4,6 +4,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 
 import com.banking.beans.Customer;
 import com.banking.beans.Login;
@@ -35,21 +36,23 @@ public class CustomerService implements UserServiceInterface {
 
 	public int register(Register register) {
 
-		// Encrypting password
-		//String encrypted = enService.encrypt(customer.getPassword().trim());
+		//Encrypting password
+		String encrypted = enService.encrypt(register.getPassword().trim());
 
-		// return 0 row effected if could not encrypt password
-//		if (encrypted == null)
-//			return 0;
-
-		//customer.setPassword(encrypted);
-
+		//return 0 row effected if could not encrypt password
+		if (encrypted == null)
+			return 0;
+		register.setPassword(encrypted);
 		return customerDao.register(register);
 	}
 
 	public Login validateLogin(Login login) {
 		// encrypting to match with the encrypted password in database
-		//login.setPassword(enService.encrypt(login.getPassword()));
+		login.setPassword(enService.encrypt(login.getPassword()));
+		return validateLoginToken(login);
+	}
+	
+	public Login validateLoginToken(Login login) {
 		return customerDao.validateLogin(login);
 	}
 	
@@ -59,26 +62,30 @@ public class CustomerService implements UserServiceInterface {
 		String username = null, password = null;
 		
 		for(Cookie cookie : cookies) {
-			
 			if(cookie.getName().equals("username"))
 				username = cookie.getValue();
 			if(cookie.getName().equals("password"))
 				password = cookie.getValue();
 		}
 		
-		
-		if(null==username || null==password || username.equals("") || password.equals("")) {
-			System.out.println("cookeis: not logged");
+		if(null==username || null==password || username.equals("") || password.equals(""))
 			return null;
-		}
+
 		Login login = new Login();
 		login.setUsername(username);
 		login.setPassword(password);
-		Login l = validateLogin(login);
+		Login l = validateLoginToken(login);
 		if(l!=null)
 			return l;
-		
-		System.out.println("not logged in");
+		return null;
+	}
+	
+	public Login isLoggedIn(HttpServletRequest request, Model m) {
+		Login l = isLoggedIn(request);
+		if(l!=null) 
+			return l;
+		m.addAttribute("login", new Login());
+		m.addAttribute("register", new Register());
 		return null;
 	}
 
@@ -87,7 +94,6 @@ public class CustomerService implements UserServiceInterface {
 	}
 
 	public Customer getCustomerFromAccountId(int id) {
-		// TODO Auto-generated method stub
 		return customerDao.getCustomerFromAccountId(id);
 	}
 

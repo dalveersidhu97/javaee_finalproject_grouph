@@ -30,24 +30,6 @@ public class TransactionDao {
 		this.template = template;
 	}
 	
-	public List<Transaction> getTransactionList(String sql){
-		 return template.query(sql, new RowMapper<Transaction>(){  
-			    
-			 public Transaction mapRow(ResultSet rs, int rownumber) throws SQLException {  
-		    	
-				Transaction t = new Transaction();
-				t.setId(rs.getInt("ID"));
-				t.setAmount(rs.getFloat("amount"));
-				t.setRemark(rs.getString("remark"));
-				t.setFromAccountId(rs.getInt("fromAccountID"));
-				t.setCustomerId(rs.getInt("customerID"));
-				t.setStatus(rs.getString("status"));
-				t.setCommitDate(rs.getDate("commitDate"));
-				return t;
-		    }  
-		 });
-	}
-	
 	public List<Transaction> getTransactionListByCustomerId(int customerId, List<Account> accountList){
 		return getTransactionList("Select * from Transactions t left join WithinBankTransactions wt on t.ID=wt.transactionID where customerID="+customerId+" or toAccountID="+accountList.get(0).getId()+" or toAccountID="+accountList.get(1).getId()+" order by commitDate desc");
 	}
@@ -76,7 +58,6 @@ public class TransactionDao {
 
 	public boolean finaliseTransaction(Transaction t) {
 		List<TransactionValue> valuesList = t.getTransactionValues();
-		
 		try {
 			// if value list size is 0... only deduct amount
 			if(valuesList==null||valuesList.size()==0)
@@ -99,10 +80,8 @@ public class TransactionDao {
 	}
 	
 	public boolean finaliseWithinBankTransaction(WithinBankTransaction t) {
-		
 		if(!accountDao.transferBalance(t.getFromAccountId(), t.getToAccountId(), t.getAmount() ))
 			return !setTransactionSatus(t.getId(), "failed");
-		
 		template.update("insert into WithinBankTransactions (transactionID, toAccountID) values ("+t.getId()+", "+t.getToAccountId()+")");
 		return setTransactionSatus(t.getId(), "completed");
 	}
@@ -119,4 +98,23 @@ public class TransactionDao {
 			return true;
 		return false;
 	}
+	
+	public List<Transaction> getTransactionList(String sql){
+		 return template.query(sql, new RowMapper<Transaction>(){  
+			    
+			 public Transaction mapRow(ResultSet rs, int rownumber) throws SQLException {  
+		    	
+				Transaction t = new Transaction();
+				t.setId(rs.getInt("ID"));
+				t.setAmount(rs.getFloat("amount"));
+				t.setRemark(rs.getString("remark"));
+				t.setFromAccountId(rs.getInt("fromAccountID"));
+				t.setCustomerId(rs.getInt("customerID"));
+				t.setStatus(rs.getString("status"));
+				t.setCommitDate(rs.getDate("commitDate"));
+				return t;
+		    }  
+		 });
+	}
+	
 }

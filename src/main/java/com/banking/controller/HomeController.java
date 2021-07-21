@@ -53,13 +53,9 @@ public class HomeController {
 		List<String> viewList = new ArrayList<String>(Arrays.asList("home"));
 		
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if(l==null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
+		Login l = customerService.isLoggedIn(request, m);
+		if(l==null) 
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
 		
 		List<Account> accountList = accountService.getAccountsList(l);
 		
@@ -82,13 +78,9 @@ public class HomeController {
 	public String showHome(Model m, HttpServletRequest request, @PathVariable String categoryName) {
 		
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if(l==null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
+		Login l = customerService.isLoggedIn(request, m);
+		if(l==null) 
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
 		
 		String category = String.join(" ", categoryName.split("-"));
 		
@@ -104,13 +96,9 @@ public class HomeController {
 	public String showTransferSelf(Model m, HttpServletRequest request) {
 		
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if(l==null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
+		Login l = customerService.isLoggedIn(request, m);
+		if(l==null) 
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
 		
 		m.addAttribute("customer", customerService.getCustomer(l));
 		m.addAttribute("accountsList", accountService.getAccountsList(l));
@@ -122,13 +110,9 @@ public class HomeController {
 	public String showTransferByEmail(Model m, HttpServletRequest request) {
 		
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if(l==null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
+		Login l = customerService.isLoggedIn(request, m);
+		if(l==null) 
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
 		
 		m.addAttribute("customer", customerService.getCustomer(l));
 		m.addAttribute("accountsList", accountService.getAccountsList(l));

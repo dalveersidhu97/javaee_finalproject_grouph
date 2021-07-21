@@ -16,7 +16,6 @@ import com.banking.dao.TransactionDao;
 interface TransactionServiceInterface {
 	public Transaction validateTransaction(HttpServletRequest request, Login l, Model m, String categoryName);
 	public Transaction createPendingTransaction(Transaction t);
-	public boolean confirmTransaction(Transaction t);
 	public boolean finaliseTransaction(Transaction t);
 }
 
@@ -91,7 +90,7 @@ public class TransactionService implements TransactionServiceInterface{
 			validatedTransaction.setTransactionValues(valueList);
 			// add pending transaction to database
 			validatedTransaction.setStatus("pending");
-			return transactionDao.createPendingTransaction(validatedTransaction);
+			return createPendingTransaction(validatedTransaction);
 		}catch(Exception e) {
 			e.printStackTrace();
 			m.addAttribute("errorMessage", "Incorrect input!");
@@ -107,11 +106,6 @@ public class TransactionService implements TransactionServiceInterface{
 		return transactionDao.createPendingTransaction(t);
 	}
 
-	public boolean confirmTransaction(Transaction t) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
 	public WithinBankTransaction validateWithinBankTransfer(HttpServletRequest request, Login l, Model m, int toAccountId) {
 		// verify fromAccount balance and toAcount account
 		Account fromAccount = accountService.getSelfAccount(l, Integer.parseInt((String)request.getParameter("accountId")));
@@ -121,7 +115,6 @@ public class TransactionService implements TransactionServiceInterface{
 			m.addAttribute("errorMessage", "Invalid account!");
 			return null;
 		}
-		
 		Transaction vt = validateTransactionData(request, l, m, " ");
 		if(vt==null) return null;
 		// create pending transaction
@@ -149,18 +142,14 @@ public class TransactionService implements TransactionServiceInterface{
 
 	// checks if the request has specified attribute
 	private boolean requestContains(String attribute, HttpServletRequest request) {
-		
 		Enumeration attrs =  request.getParameterNames();
-	
 		while(attrs.hasMoreElements()) {
-			
 		    if(attrs.nextElement().equals(attribute)) {
 		    	if(!((String)request.getParameter(attribute)).trim().equals(""))
 		    		return true;
 		    	else return false;
 		    }
 		}
-			
 		return false;
 	}
 }

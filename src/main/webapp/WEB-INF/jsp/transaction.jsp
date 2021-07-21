@@ -5,17 +5,10 @@
 <h2>${categoryName}</h2>
 
 <form class="form" id="regForm" action="../transactionProcess" method="post">
-	<div>
-		<label>From account</label>
-		<select name="accountId" id="fromAccount">
-		  <option value="">- select account</option>
-	<%
-	for(Account ac : (List<Account>)request.getAttribute("accountsList")){
-		String account = ac.getId()+" (" + ac.getBalance()+")";
-		out.print("<option value='"+ac.getId()+"'>"+account);
-	}
-	out.print("</option></select></div>");
 
+	<jsp:include page="fromAccount.jsp"></jsp:include>
+
+	<%
 	for(CategoryOption op : (List<CategoryOption>)request.getAttribute("optionsList")){
 	%>
 	<div>

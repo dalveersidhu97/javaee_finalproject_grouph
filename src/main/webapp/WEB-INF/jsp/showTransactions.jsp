@@ -16,6 +16,9 @@
 		List<Transaction> transactionsList = (List<Transaction>)request.getAttribute("tranactionsList");
 	
 		for(Transaction t: transactionsList){
+			
+			
+			
 			out.print("<tr>");
 				out.print("<td>"+t.getId()+"</td>");
 				out.print("<td>"+t.getRemark()+"</td>");
