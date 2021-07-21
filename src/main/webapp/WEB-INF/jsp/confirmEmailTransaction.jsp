@@ -4,25 +4,20 @@
 
 	<h2>Are the Below details correct?</h2>
 	<%
-		Transaction t = (Transaction)session.getAttribute("transaction");
+		WithinBankTransaction t = (WithinBankTransaction)session.getAttribute("transaction");
 		String redirect = (String)request.getAttribute("redirect");
-		UtilityService uService= (UtilityService)request.getAttribute("utilityServiceObject");
+		CustomerService cService= (CustomerService)request.getAttribute("customerServiceObject");
 		
-		List<TransactionValue> valuesList = t.getTransactionValues();
-		String values = "";
-		if(valuesList!=null){
-			if(valuesList.size()!=0){
-				for(TransactionValue v : valuesList){
-					values += "<tr><th>"+uService.getCategoryOption(v.getOptionId()).getTitle()+"<th></td>"+v.getOptionValue()+"</tr>";
-				}	
-			}
-		}
+		Customer receiver = cService.getCustomerFromAccountId(t.getToAccountId());
+		
+		String name = receiver.getFirstName().toUpperCase() +" "+ receiver.getLastName().toUpperCase();
 		
 	%>
 	<table>
 		<tr><th>Refrence Id</th><td><%=t.getId()%></td></tr>
 		<tr><th>Amount</th><td><%=t.getAmount()%></td></tr>
 		<tr><th>Remark</th><td><%=t.getRemark()%></td></tr>
-		<%=values %>
+		<tr><th>Receiver name</th><td><%=name%></td></tr>
+		<tr><th>Receiver email</th><td><%=receiver.getEmail().toUpperCase()%></td></tr>
 	</table>
 	<button><a href="<%=redirect%>">confirm</a></button>

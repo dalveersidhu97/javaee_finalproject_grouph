@@ -5,9 +5,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
+import com.banking.beans.Account;
 import com.banking.beans.CategoryOption;
 import com.banking.beans.UtilityCategory;
 
@@ -30,6 +33,26 @@ public class UtilityDao{
 		        return uc;  
 		    }  
 		 });
+	}
+	
+	public CategoryOption getCategoryOption(int optionId) {
+		String sql = "select * from TransactionCategoryOptions where ID="+optionId;
+		return template.query(sql,new ResultSetExtractor<CategoryOption>(){
+			public CategoryOption extractData(ResultSet rs) throws SQLException, DataAccessException {
+		    	
+				if(rs.next()) {
+		    		
+		    		CategoryOption co = new CategoryOption();
+		    		co.setId(rs.getInt("ID"));
+		    		co.setCategoryId(rs.getInt("categoryID"));
+		    		co.setTitle(rs.getString("optionTitle"));
+		    		co.setInputName(rs.getString("inputName"));
+		    		co.setInputType(rs.getString("inputType"));
+		    		return co;
+		    	}
+		    	return null;
+		     } 	 
+		  });
 	}
 	
 	// get category options list

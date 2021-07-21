@@ -25,6 +25,7 @@ interface UtilityServiceInterface {
 	public List<UtilityCategory> getCategoryList();
 	public List<CategoryOption> getCategoryOptionsList(UtilityCategory uc);
 	public List<CategoryOption> getCategoryOptionsList(String categoryName);
+	public CategoryOption getCategoryOption(int optionId) ;
 }
 
 public class UtilityService implements UtilityServiceInterface {
@@ -46,6 +47,10 @@ public class UtilityService implements UtilityServiceInterface {
 		UtilityCategory utilityCategory = new UtilityCategory();
 		utilityCategory.setName(categoryName);
 		return utilityDao.getCategoryOptionsList(utilityCategory);
+	}
+
+	public CategoryOption getCategoryOption(int optionId) {
+		return utilityDao.getCategoryOption(optionId);
 	}
 
 	

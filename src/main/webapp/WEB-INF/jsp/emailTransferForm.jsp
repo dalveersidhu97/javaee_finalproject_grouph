@@ -7,7 +7,7 @@
 <form class="form" id="regForm" action="../emailTransferProcess" method="post">
 	<div>
 		<label>From account</label>
-		<select name="fromAccountId" id="fromAccountId">
+		<select name="accountId" id="accountId">
 		  <option value="">- select from account</option>
 	<%
 	for(Account ac : (List<Account>)request.getAttribute("accountsList")){

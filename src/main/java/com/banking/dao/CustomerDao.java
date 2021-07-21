@@ -150,7 +150,7 @@ public class CustomerDao {
 	}
 	
 	public Customer getCustomerFromAccountId(int accountId) {
-		return getCustomer("select * from Customers c inner join Accounts a on c.ID=a.customerID where a.customerID = "+accountId);
+		return getCustomer("select * from Customers c inner join Accounts a on c.ID=a.customerID where a.ID = "+accountId);
 	}
 	
 	public Customer getCustomer(Login l) {

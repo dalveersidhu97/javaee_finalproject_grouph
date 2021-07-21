@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.banking.beans.Account;
 import com.banking.beans.Transaction;
 import com.banking.beans.Transaction.TransactionValue;
+import com.banking.beans.WithinBankTransaction;
 
 public class TransactionDao {
 
@@ -47,55 +48,48 @@ public class TransactionDao {
 		 });
 	}
 	
-	public List<Transaction> getTransactionListByCustomerId(int customerId){
-		return getTransactionList("Select * from Transactions where customerID="+customerId+" order by commitDate desc");
+	public List<Transaction> getTransactionListByCustomerId(int customerId, List<Account> accountList){
+		return getTransactionList("Select * from Transactions t left join WithinBankTransactions wt on t.ID=wt.transactionID where customerID="+customerId+" or toAccountID="+accountList.get(0).getId()+" or toAccountID="+accountList.get(1).getId()+" order by commitDate desc");
 	}
 	
-	public List<Transaction> getTransactionListByCustomerAccountId(int customerId, int accountId){
-		return getTransactionList("Select * from Transactions where customerID="+customerId+" and fromAccountID="+accountId+" order by commitDate desc");
+	public List<Transaction> getTransactionListByAccountId(int accountId){
+		return getTransactionList("Select * from Transactions t left join WithinBankTransactions wt on t.ID=wt.transactionID where fromAccountID="+accountId+" or toAccountID="+accountId+" order by commitDate desc");
 	}
 
 	public Transaction createPendingTransaction(Transaction t) {
 		int tId = (int)Math.floor(Math.random()*(10000000-100000+1)+100000);
 		t.setId(tId); // generate random number between 10000000 - 100000
 		
-		String sql = "INSERT INTO Transactions (ID, customerID, fromAccountId, amount, remark) Values ("+t.getId()+","+t.getCustomerId()+","+t.getFromAccountId()+","+-t.getAmount()+",'"+t.getRemark()+"');";
+		String sql = "INSERT INTO Transactions (ID, customerID, fromAccountId, amount, remark) Values ("+t.getId()+","+t.getCustomerId()+","+t.getFromAccountId()+","+t.getAmount()+",'"+t.getRemark()+"');";
 		try {
 			// insert into Customers 
-			int rowsEffected = template.update(sql);
-			System.out.println("rowsEffected:"+rowsEffected);
-			if(rowsEffected==1)
+			if( template.update(sql)==1)
 				return t;
-			System.out.println("PendingTransaction: null");
-			return null;
 		} catch (DuplicateKeyException e) {
 			// try again with different transaction id
-			System.out.println("Retrying...");
 			createPendingTransaction(t);
 		} catch (Exception e) {
 			e.printStackTrace();
-			// roll back if there is any error
 		}
 		return null;
 	}
 
-	public boolean commit(Transaction t) {
-		
+	public boolean finaliseTransaction(Transaction t) {
 		List<TransactionValue> valuesList = t.getTransactionValues();
 		
 		try {
 			// if value list size is 0... only deduct amount
 			if(valuesList==null||valuesList.size()==0)
-				return finishTransaction(t); // deduct amount and set transaction status
+				return updateBalanceAndSetStatus(t); // deduct amount and set transaction status
 
 			// prepare SQL statement
 			String sql = "INSERT INTO TransactionValues (optionID, optionValue, transactionID) Values";
 			for(TransactionValue tv : valuesList)
 				sql += "("+tv.getOptionId()+", '"+tv.getOptionValue()+"', "+t.getId()+"),";
-			sql = sql.substring(0, sql.length() - 1);
+			sql = sql.substring(0, sql.length() - 1); // remove comma form last
 			
-			if(template.update(sql)==valuesList.size()) 
-				return finishTransaction(t); // deduct amount and set transaction status
+			if(template.update(sql)==valuesList.size()) // if all the option fields are inserted
+				return updateBalanceAndSetStatus(t); // deduct amount and set transaction status
 		
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -104,14 +98,21 @@ public class TransactionDao {
 		return false;	
 	}
 	
-	public boolean finishTransaction(Transaction t) {
+	public boolean finaliseWithinBankTransaction(WithinBankTransaction t) {
 		
-		if(!accountDao.updateBalanceBy(-t.getAmount(),t.getFromAccountId()))
+		if(!accountDao.transferBalance(t.getFromAccountId(), t.getToAccountId(), t.getAmount() ))
 			return !setTransactionSatus(t.getId(), "failed");
-			
+		
+		template.update("insert into WithinBankTransactions (transactionID, toAccountID) values ("+t.getId()+", "+t.getToAccountId()+")");
 		return setTransactionSatus(t.getId(), "completed");
 	}
 	
+	public boolean updateBalanceAndSetStatus(Transaction t) {
+		if(!accountDao.updateBalanceBy(t.getAmount(),t.getFromAccountId()))
+			return !setTransactionSatus(t.getId(), "failed");
+		return setTransactionSatus(t.getId(), "completed");
+	}
+
 	public boolean setTransactionSatus(int transactionId, String status) {
 		String sql = "update Transactions set status='"+status+"' where ID = "+transactionId+";";
 		if(template.update(sql)==1)

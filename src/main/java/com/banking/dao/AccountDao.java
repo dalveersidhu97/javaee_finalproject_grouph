@@ -88,7 +88,7 @@ public class AccountDao {
 		return getAccount(sql);
 	}
 	public Account getCustomerAccount(int customerId, String type) {
-		String sql = "select * from Accounts a inner join Customers c on c.ID=a.customerID where c.ID="+customerId+";";
+		String sql = "select * from Accounts a inner join Customers c on c.ID=a.customerID where c.ID="+customerId+" and accountType='"+type+"';";
 		return getAccount(sql);
 	}
 	
@@ -103,8 +103,8 @@ public class AccountDao {
 		if(!updateBalanceBy(-amount, fromAccountId)) 
 			return false;
 		if(!updateBalanceBy(amount, toAccountId))
-			updateBalanceBy(-amount, fromAccountId);
-		return false;
+			return updateBalanceBy(amount, fromAccountId);
+		return true;
 	}
 
 	public JdbcTemplate getTemplate() {

@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.banking.beans.Account;
 import com.banking.beans.CategoryOption;
 import com.banking.beans.Login;
 import com.banking.beans.Register;
@@ -60,12 +61,14 @@ public class HomeController {
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
 		}
 		
+		List<Account> accountList = accountService.getAccountsList(l);
+		
 		// get details for the logged in user
 		m.addAttribute("customer", customerService.getCustomer(l));
 		m.addAttribute("categoriesList", utilityService.getCategoryList());
-		m.addAttribute("accountsList", accountService.getAccountsList(l));
+		m.addAttribute("accountsList", accountList);
 		
-		List<Transaction> tranactionList = transactionService.getTransactionListByCustomerId(l.getCustomerId());
+		List<Transaction> tranactionList = transactionService.getTransactionListByCustomerId(l.getCustomerId(), accountList);
 		
 		if(tranactionList.size()>0) {
 			m.addAttribute("tranactionsList", tranactionList);

@@ -82,5 +82,9 @@ public class AccountService implements AccountServiceInterface {
 	public float getAccountBalance(Login l, int accountId) {
 		return accountDao.getAccount(l, accountId).getBalance();
 	}
+	
+	public boolean transferBalance(int fromAccountId, int toAccountId, float amount) {
+		return accountDao.transferBalance(fromAccountId, toAccountId, amount);
+	}
 
 }

@@ -31,37 +31,49 @@ public class TransactionService implements TransactionServiceInterface{
 	@Autowired
 	CustomerService customerService;
 	
-	public List<Transaction> getTransactionListByCustomerId(int customerId){
-		return transactionDao.getTransactionListByCustomerId(customerId);
+	public List<Transaction> getTransactionListByCustomerId(int customerId, List<Account> accountList){
+		return transactionDao.getTransactionListByCustomerId(customerId, accountList);
 	}
 	
-	public List<Transaction> getTransactionListByCustomerAccountId(int customerId, int accountId){
-		return transactionDao.getTransactionListByCustomerAccountId(customerId, accountId);
+	public List<Transaction> getTransactionListByAccountId(int accountId){
+		return transactionDao.getTransactionListByAccountId(accountId);
 	}
+	// validate input fields and set error message 
+	public Transaction validateTransactionData(HttpServletRequest request, Login l, Model m, String categoryName) {
 	
-	public Transaction validateTransaction(HttpServletRequest request, Login l, Model m, String categoryName) {
 		try {
-			List<CategoryOption> options = utilityService.getCategoryOptionsList(categoryName);
-		
-		
 			float amount = Float.parseFloat((String)request.getParameter("amount"));
 			amount = (amount<0)?-amount:amount; // absolute amount
-			amount = (categoryName.contains("eposit"))?-amount:amount; // temporary for deposit transactions
+			amount = (categoryName.contains("eposit"))?amount:-amount; // temporary for deposit transactions
 			int accountId = Integer.parseInt((String)request.getParameter("accountId"));
 			
 			// check if the customer has enough amount
-			if(amount > accountService.getAccountBalance(l, accountId)) {
+			if(-amount > accountService.getAccountBalance(l, accountId)) {
 				m.addAttribute("errorMessage", "Insufficient balance!");
 				return null; // insufficient balance
 			}
 			// create transaction object
 			Transaction transaction = new Transaction();
-			List<TransactionValue> valueList = new ArrayList<TransactionValue>();
-			
 			transaction.setFromAccountId(accountId);
 			transaction.setAmount(amount);
 			transaction.setCustomerId(l.getCustomerId());
 			transaction.setRemark((String)request.getParameter("remark"));
+			// add pending transaction to database
+			transaction.setStatus("pending");
+			return transaction;
+		}catch(Exception e) {
+			e.printStackTrace();
+			m.addAttribute("errorMessage", "Incorrect input!");
+		}
+		return null;
+	}
+	
+	public Transaction validateTransaction(HttpServletRequest request, Login l, Model m, String categoryName) {
+		try {
+			Transaction validatedTransaction = validateTransactionData(request, l, m, categoryName);
+			if(validatedTransaction==null) return null;
+			List<CategoryOption> options = utilityService.getCategoryOptionsList(categoryName);
+			List<TransactionValue> valueList = new ArrayList<TransactionValue>();
 			
 			// get only those request attributes which belong to this transaction category
 			for(CategoryOption o : options) {
@@ -76,12 +88,10 @@ public class TransactionService implements TransactionServiceInterface{
 				tValue.setOptionValue((String)request.getParameter(o.getInputName()));
 				valueList.add(tValue); // add to value list
 			}
-			transaction.setTransactionValues(valueList);
+			validatedTransaction.setTransactionValues(valueList);
 			// add pending transaction to database
-			transaction.setStatus("pending");
-			
-			return transactionDao.createPendingTransaction(transaction);
-		
+			validatedTransaction.setStatus("pending");
+			return transactionDao.createPendingTransaction(validatedTransaction);
 		}catch(Exception e) {
 			e.printStackTrace();
 			m.addAttribute("errorMessage", "Incorrect input!");
@@ -90,7 +100,7 @@ public class TransactionService implements TransactionServiceInterface{
 	}
 
 	public boolean finaliseTransaction(Transaction t) {
-		return transactionDao.commit(t);
+		return transactionDao.finaliseTransaction(t);
 	}
 	
 	public Transaction createPendingTransaction(Transaction t) {
@@ -102,58 +112,46 @@ public class TransactionService implements TransactionServiceInterface{
 		return false;
 	}
 	
-	public Transaction validateTransfer(HttpServletRequest request, Login l, int toAccountId) {
+	public WithinBankTransaction validateWithinBankTransfer(HttpServletRequest request, Login l, Model m, int toAccountId) {
 		// verify fromAccount balance and toAcount account
-		Account fromAccount = accountService.getSelfAccount(l, Integer.parseInt((String)request.getParameter("fromAccountId")));
+		Account fromAccount = accountService.getSelfAccount(l, Integer.parseInt((String)request.getParameter("accountId")));
 		Account toAccount = accountService.getAccount(toAccountId);
 		
-		if(fromAccount==null || toAccount==null)
+		if(fromAccount==null || toAccount==null) {
+			m.addAttribute("errorMessage", "Invalid account!");
 			return null;
+		}
 		
+		Transaction vt = validateTransactionData(request, l, m, " ");
+		if(vt==null) return null;
 		// create pending transaction
-		Transaction t = new Transaction();
-		float amount = Float.parseFloat((String)request.getParameter("amount"));
+		WithinBankTransaction t = new WithinBankTransaction();
+		float amount = vt.getAmount();
 		amount = (amount<0)?-amount:amount; // absolute amount
 		t.setAmount(amount);
-		t.setRemark(request.getParameter("remark"));
-		t.setFromAccountId(fromAccount.getId());
-		t.setCustomerId(l.getCustomerId());
+		t.setRemark(vt.getRemark());
+		t.setFromAccountId(vt.getFromAccountId());
+		t.setCustomerId(vt.getCustomerId());
+		t.setToAccountId(toAccount.getId());
 		
-		Transaction pendingDeduct = createPendingTransaction(t);
-		if(pendingDeduct!=null) request.getSession().setAttribute("toAccountId", toAccount.getId());
-		return pendingDeduct;
+		return (WithinBankTransaction) createPendingTransaction(t);
 	}
 	
-	public Transaction validateSelftTransfer(HttpServletRequest request, Login l) {
+	public Transaction validateSelfTransfer(HttpServletRequest request, Login l, Model m, float amountSign) {
 		int toAccountId = Integer.parseInt(request.getParameter("toAccountId"));		
-		return validateTransfer(request, l, toAccountId);
+		return validateWithinBankTransfer(request, l, m, toAccountId);
 	}
 	
-	public boolean finaliseTransferDeposite(HttpServletRequest request) {
-		
-		int toAccountId = (Integer)request.getSession().getAttribute("toAccountId");
-		Account toAccount = accountService.getAccount(toAccountId);
-		Transaction t1 = (Transaction) request.getSession().getAttribute("transaction");
-		
-		// create second pending transaction
-		Transaction t2 = new Transaction();
-		t2.setAmount(-t1.getAmount());
-		t2.setRemark(t1.getRemark());
-		t2.setFromAccountId(toAccount.getId());
-		t2.setCustomerId(customerService.getCustomerFromAccountId(toAccount.getCustomerId()).getId());
-		Transaction pendingDeposit = createPendingTransaction(t2);
-		
-		if(pendingDeposit==null)
-			return false;
-		
-		return finaliseTransaction(pendingDeposit);
+	public boolean finaliseWithinBankTransaction(HttpServletRequest request) {
+		WithinBankTransaction withinBankT = (WithinBankTransaction) request.getSession().getAttribute("transaction");
+		return transactionDao.finaliseWithinBankTransaction(withinBankT);
 	}
-	
+
 	// checks if the request has specified attribute
 	private boolean requestContains(String attribute, HttpServletRequest request) {
 		
 		Enumeration attrs =  request.getParameterNames();
-		
+	
 		while(attrs.hasMoreElements()) {
 			
 		    if(attrs.nextElement().equals(attribute)) {
