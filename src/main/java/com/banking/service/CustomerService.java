@@ -59,6 +59,9 @@ public class CustomerService implements UserServiceInterface {
 	public Login isLoggedIn(HttpServletRequest request) {
 		
 		Cookie[] cookies = request.getCookies();
+		
+		if(cookies == null) return null;
+		
 		String username = null, password = null;
 		
 		for(Cookie cookie : cookies) {

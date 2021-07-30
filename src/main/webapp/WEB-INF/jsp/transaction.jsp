@@ -11,28 +11,28 @@
 	<%
 	for(CategoryOption op : (List<CategoryOption>)request.getAttribute("optionsList")){
 	%>
-	<div>
+	<div class="form-group">
 		<label for="<%=op.getInputName()%>"><%=op.getTitle()%></label>
-		<input name="<%=op.getInputName()%>" id="<%=op.getInputName()%>" type="<%=op.getInputType()%>" placeholder="Enter <%=op.getTitle().toLowerCase()%>" />
+		<input class="form-control" name="<%=op.getInputName()%>" id="<%=op.getInputName()%>" type="<%=op.getInputType()%>" placeholder="Enter <%=op.getTitle().toLowerCase()%>" />
 	</div>
 	<%
 	}
 	
 	%>
-	<div>
+	<div class="form-group">
 		<label>Amount</label>
-		<input path="amount" name="amount" id="amount" placeholder="Enter amount"/>
+		<input class="form-control" path="amount" name="amount" id="amount" placeholder="Enter amount"/>
 	</div>
 	<%
 	if(((String)request.getAttribute("categoryName")).equals("Bank Transfer")){
-		out.print("<div><label>Remark</label><input type='text' name='remark' id='remark' placeholder='Enter remark'/></div>");
+		out.print("<div class='form-group'><label>Remark</label><input class='form-control' type='text' name='remark' id='remark' placeholder='Enter remark'/></div>");
 	}else{
 		out.print("<input type='hidden' name='remark' value='"+(String)request.getAttribute("categoryName")+"'/>");
 	}
 	%>
 	<input type="hidden" name="categoryName", value="${categoryName}"/>
 	<div>
-		<input type="submit" id="submit" value="Submit">
+		<input class="form-control btn btn-primary" type="submit" id="submit" value="Submit">
 	</div>
 </form>
 

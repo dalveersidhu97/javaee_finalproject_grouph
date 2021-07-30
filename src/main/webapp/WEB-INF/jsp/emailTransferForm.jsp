@@ -8,22 +8,22 @@
 		  
  	<jsp:include page="fromAccount.jsp"></jsp:include>
 
-	<div>
+	<div class="form-group">
 		<label>Enter email Id or account number of the receiver</label>
-		<input type="text" name="eamilOrAccountId" id="eamil" required placeholder="Enter email or account number"/>
+		<input class="form-control" type="text" name="eamilOrAccountId" id="eamil" required placeholder="Enter email or account number"/>
 	</div>
 
-	<div>
+	<div class="form-group">
 		<label>Amount</label>
-		<input path="amount" name="amount" id="amount" placeholder="Enter amount"/>
+		<input class="form-control" path="amount" name="amount" id="amount" placeholder="Enter amount"/>
 	</div>
 	
-	<div>
+	<div class="form-group">
 		<label>Remark</label>
-		<input name="remark" id="remark" placeholder="Enter remark"/>
+		<input class="form-control" name="remark" id="remark" placeholder="Enter remark"/>
 	</div>
 	<div>
-		<input type="submit" id="submit" value="Submit">
+		<input class="form-control btn btn-primary" type="submit" id="submit" value="Submit">
 	</div>
 </form>
 

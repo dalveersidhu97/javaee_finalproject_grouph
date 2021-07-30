@@ -3,8 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
 <h2>Transactions</h2>
-
-<table style="border:1px solid black;border-collapse:collaplse;text-align:center;">
+<br>
+<table class="table">
 	<tr>
 		<th>Reference ID</th>
 		<th>Remark</th>

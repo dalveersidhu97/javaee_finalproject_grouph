@@ -2,11 +2,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>  
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
-<p>${customer.firstName} ${customer.lastName}</p>
-<p><a href="./logout">Logout</a></p>
-
-<br><hr><br>	
-<h2>Accounts</h2>
+<div class="col-lg-12" id="logout">
+<p><a class="btn btn-primary active">${customer.firstName} ${customer.lastName}</a> <a href="./logout" class="btn btn-danger">Logout</a></p>
+</div>
+<hr>
+<center>	
+<h2>Accounts</h2><br>
 	
 	<%
 	
@@ -19,21 +20,6 @@
 		}
 	%>
 	<br>
-<hr><br>
-<h2>Services</h2>
-	
-	<h2><a href='./transfer/self'>Self transfer</a></h2>
-	<h2><a href='./transfer/by-email'>Transfer by Email</a></h2>
-
-	<%
-		for(UtilityCategory uc : (List<UtilityCategory>)request.getAttribute("categoriesList")){
-			String category = uc.getName();
-			String slug = String.join("-", category.split(" "));
-			
-			out.print("<h2><a href='./categories/"+slug+"'>"+category+"</a></h2>");
-			
-		}
-	%>
-<br><br><br>
+<center>
 
     

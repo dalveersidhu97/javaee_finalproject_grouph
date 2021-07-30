@@ -86,6 +86,7 @@ public class HomeController {
 		
 		m.addAttribute("customer", customerService.getCustomer(l));
 		m.addAttribute("categoryName", category);
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		m.addAttribute("optionsList", utilityService.getCategoryOptionsList(category));
 		m.addAttribute("accountsList", accountService.getAccountsList(l));
 		
@@ -99,7 +100,7 @@ public class HomeController {
 		Login l = customerService.isLoggedIn(request, m);
 		if(l==null) 
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		m.addAttribute("customer", customerService.getCustomer(l));
 		m.addAttribute("accountsList", accountService.getAccountsList(l));
 		
@@ -113,7 +114,7 @@ public class HomeController {
 		Login l = customerService.isLoggedIn(request, m);
 		if(l==null) 
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		m.addAttribute("customer", customerService.getCustomer(l));
 		m.addAttribute("accountsList", accountService.getAccountsList(l));
 		

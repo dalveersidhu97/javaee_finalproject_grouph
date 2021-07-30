@@ -62,6 +62,7 @@ public class TransactionController {
 		// show confirm transaction page
 		m.addAttribute("redirect", "./transaction-status");
 		m.addAttribute("utilityServiceObject", utilityService);
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return viewService.model(m).view("confirmTransaction");
 		
 		//return "redirect:/transaction-status";
@@ -76,6 +77,7 @@ public class TransactionController {
 			// else show login page
 			m.addAttribute("login", new Login());
 			m.addAttribute("register", new Register());
+			m.addAttribute("categoriesList", utilityService.getCategoryList());
 			return viewService.model(m).views(Arrays.asList("login", "signup"));
 		}
 		
@@ -92,6 +94,7 @@ public class TransactionController {
 		request.getSession().setAttribute("transaction", transaction);
 		
 		// show confirm transaction page
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return "redirect:/transfer-transaction-status";
 	}
 	
@@ -128,6 +131,7 @@ public class TransactionController {
 		// show confirm transaction page
 		m.addAttribute("redirect", "./transfer-transaction-status");
 		m.addAttribute("customerServiceObject", customerService);
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return viewService.model(m).view("confirmEmailTransaction");
 		
 		//return "redirect:/transfer-transaction-status";
@@ -151,6 +155,7 @@ public class TransactionController {
 			return viewService.model(m).view("transactionStatus");
 		}
 		m.addAttribute("status",  "transfer success");
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return viewService.model(m).view("transactionStatus");
 	}
 	
@@ -174,7 +179,7 @@ public class TransactionController {
 			m.addAttribute("status", "success");
 		else
 			m.addAttribute("status", "fail");
-		
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return viewService.model(m).view("transactionStatus");
 	}
 	

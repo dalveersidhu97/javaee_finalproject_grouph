@@ -1,7 +1,10 @@
 <!-- Navigation Bar -->
-<div class="navbar">
-  <a href="/finalproject_grouph">Home</a>
-  <a href="#">About</a>
-  <a href="#">Contact</a>
-  <a href="#">Help</a>
+<div class="col-sm-9 col-lg-2" id="container">
+	<div class="list-group list-group-flush">
+		<a href="/finalproject_grouph"
+			class="list-group-item list-group-item-action">Home</a> 
+		<a href="#" class="list-group-item list-group-item-action">About</a>
+		<a href="#" class="list-group-item list-group-item-action">Contact</a> 
+		<a href="#" class="list-group-item list-group-item-action">Help</a>
+	</div>
 </div>

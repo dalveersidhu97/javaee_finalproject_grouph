@@ -8,9 +8,9 @@
 
 	<jsp:include page="fromAccount.jsp"></jsp:include>
 	
-	<div>
+	<div class="form-group">
 		<label>To account</label>
-		<select name="toAccountId" id="toAccountId">
+		<select class="form-control" name="toAccountId" id="toAccountId">
 		  <option value="">- select to account</option>
 	<%
 	for(Account ac : (List<Account>)request.getAttribute("accountsList")){
@@ -20,14 +20,14 @@
 	out.print("</option></select></div>");
 	%>
 
-	<div>
+	<div class="form-group">
 		<label>Amount</label>
-		<input path="amount" name="amount" id="amount" placeholder="Enter amount"/>
+		<input class="form-control" path="amount" name="amount" id="amount" placeholder="Enter amount"/>
 	</div>
 	
 	<input type='hidden' name='remark' value='Self transfer'/>
 	<div>
-		<input type="submit" id="submit" value="Submit">
+		<input class="form-control btn btn-primary" type="submit" id="submit" value="Submit">
 	</div>
 </form>
 

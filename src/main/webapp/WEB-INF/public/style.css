@@ -1,0 +1,31 @@
+#main_section
+{
+	margin:auto;
+	width:70%;
+	
+}
+col-* {}
+#container
+{
+	margin-top:2%;
+	padding: 10px 20px;
+}
+
+#container>h2
+{
+	text-align:center;
+	margin-top:2%;
+}
+input,button, select
+{
+	height:50px !important;
+}
+button
+{
+	background-color:grey;
+}
+#logout
+{
+	text-align:right;
+	margin-top:4%;
+}

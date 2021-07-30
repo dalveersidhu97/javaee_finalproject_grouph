@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>  
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
-	<h2>Are the Below details correct?</h2>
+	<h2>Are the Below details correct?</h2><br>
 	<%
 		Transaction t = (Transaction)session.getAttribute("transaction");
 		String redirect = (String)request.getAttribute("redirect");
@@ -19,10 +19,10 @@
 		}
 		
 	%>
-	<table>
+	<table class="table">
 		<tr><th>Refrence Id</th><td><%=t.getId()%></td></tr>
 		<tr><th>Amount</th><td><%=t.getAmount()%></td></tr>
 		<tr><th>Remark</th><td><%=t.getRemark()%></td></tr>
 		<%=values %>
 	</table>
-	<button><a href="<%=redirect%>">confirm</a></button>
+	<a class="btn btn-primary container" href="<%=redirect%>">confirm</a>

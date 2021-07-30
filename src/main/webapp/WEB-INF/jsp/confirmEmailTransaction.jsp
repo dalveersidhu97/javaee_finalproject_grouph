@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>  
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 
-	<h2>Are the Below details correct?</h2>
+	<h2>Are the Below details correct?</h2><br>
 	<%
 		WithinBankTransaction t = (WithinBankTransaction)session.getAttribute("transaction");
 		String redirect = (String)request.getAttribute("redirect");
@@ -13,11 +13,11 @@
 		String name = receiver.getFirstName().toUpperCase() +" "+ receiver.getLastName().toUpperCase();
 		
 	%>
-	<table>
+	<table class="table">
 		<tr><th>Refrence Id</th><td><%=t.getId()%></td></tr>
 		<tr><th>Amount</th><td><%=t.getAmount()%></td></tr>
 		<tr><th>Remark</th><td><%=t.getRemark()%></td></tr>
 		<tr><th>Receiver name</th><td><%=name%></td></tr>
 		<tr><th>Receiver email</th><td><%=receiver.getEmail().toUpperCase()%></td></tr>
 	</table>
-	<button><a href="<%=redirect%>">confirm</a></button>
+	<a class="btn btn-primary container" href="<%=redirect%>">confirm</a>
