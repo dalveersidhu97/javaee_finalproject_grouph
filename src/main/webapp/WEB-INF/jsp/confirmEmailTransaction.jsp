@@ -13,11 +13,17 @@
 		String name = receiver.getFirstName().toUpperCase() +" "+ receiver.getLastName().toUpperCase();
 		
 	%>
+	
 	<table class="table">
-		<tr><th>Refrence Id</th><td><%=t.getId()%></td></tr>
-		<tr><th>Amount</th><td><%=t.getAmount()%></td></tr>
-		<tr><th>Remark</th><td><%=t.getRemark()%></td></tr>
-		<tr><th>Receiver name</th><td><%=name%></td></tr>
-		<tr><th>Receiver email</th><td><%=receiver.getEmail().toUpperCase()%></td></tr>
+		<tbody>
+			<tr>
+				<th class='text-right'>Refrence Id</th>
+				<td><%=t.getId()%></td>
+			</tr>
+			<tr><th class='text-right col-6'>Amount</th><td><%=t.getAmount()%></td></tr>
+			<tr><th class='text-right'>Remark</th><td><%=t.getRemark()%></td></tr>
+			<tr><th class='text-right'>Receiver name</th><td><%=name%></td></tr>
+			<tr><th class='text-right'>Receiver email</th><td><%=receiver.getEmail().toUpperCase()%></td></tr>
+		</tbody>
 	</table>
 	<a class="btn btn-primary container" href="<%=redirect%>">confirm</a>

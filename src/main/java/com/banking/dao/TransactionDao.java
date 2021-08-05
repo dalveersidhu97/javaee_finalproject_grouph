@@ -35,7 +35,34 @@ public class TransactionDao {
 	AccountDao accountDao;
 
 	private JdbcTemplate template;
+	
+	// Get complete details of a transaction
+	public Transaction getTransaction(String transactionId) {
+		
+		// get the transaction
+		Transaction t = getTransactionList("select * from Transactions where ID="+transactionId+";").get(0);
+		
+		// get all the details about this transaction
+		String sql = "	select optionTitle, optionValue from BankingProject.TransactionValues tv inner join BankingProject.Transactions t on t.ID=tv.transactionID "
+				+ "	inner join BankingProject.TransactionCategoryOptions tco on tco.ID = tv.optionID where t.ID = "+transactionId+";";
+		
+		// get list of options and values for example option = Account no. value = 2343432
+		List<Transaction.TransactionValue> tvList = template.query(sql, new RowMapper<Transaction.TransactionValue>() {
 
+			public Transaction.TransactionValue mapRow(ResultSet rs, int rownumber) throws SQLException {
+				
+					Transaction.TransactionValue tv = new Transaction.TransactionValue();
+					tv.setOptionTitle(rs.getString("optionTitle"));
+					tv.setOptionValue(rs.getString("optionValue"));
+					return tv;
+	
+			}
+		});
+		
+		t.setTransactionValues(tvList);
+		return t;
+	}
+	
 	// Get all transactions for specific Customer by customer id
 	public List<Transaction> getTransactionListByCustomerId(int customerId, List<Account> accountList) {
 		return getTransactionList(

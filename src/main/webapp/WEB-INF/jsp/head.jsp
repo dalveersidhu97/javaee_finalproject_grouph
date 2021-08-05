@@ -1,5 +1,5 @@
 <head>
-<title>Page Title</title>
+<title>Net Banking</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>  
@@ -20,12 +20,12 @@ body {
 
 /* Header/logo Title */
 .header {
-  padding: 30px;
+  padding: 15px;
   text-align: center;
   background: #f44336;
   color: white;
 }
-.header p{padding: 0;padding-top: 5px;}
+.header p{padding: 0;margin: 0;}
 
 /* Style the top navigation bar */
 .navbar {

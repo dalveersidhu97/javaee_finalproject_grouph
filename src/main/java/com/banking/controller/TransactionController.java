@@ -49,14 +49,9 @@ public class TransactionController {
 	@RequestMapping("/transactionProcess")
 	public String processTransaction(Model m, HttpServletRequest request) {
 
+		Login l = loggedIn(m, request);
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if (l == null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
+		if (l==null) return "redirect:/finalproject_grouph/login";
 
 		// create pending transaction
 		Transaction transaction = transactionService.validateTransaction(request, l, m,
@@ -72,7 +67,6 @@ public class TransactionController {
 		// show confirm transaction page
 		m.addAttribute("redirect", "./transaction-status");
 		m.addAttribute("utilityServiceObject", utilityService);
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return viewService.model(m).view("confirmTransaction");
 
 		// return "redirect:/transaction-status";
@@ -81,15 +75,9 @@ public class TransactionController {
 	@RequestMapping("/selfTransferProcess")
 	public String processSelfTransfer(Model m, HttpServletRequest request) {
 
+		Login l = loggedIn(m, request);
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if (l == null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
-			m.addAttribute("categoriesList", utilityService.getCategoryList());
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
+		if (l==null) return "redirect:/login";
 
 		// create pending transactions
 		Transaction transaction = transactionService.validateSelfTransfer(request, l, m, 1);
@@ -104,21 +92,15 @@ public class TransactionController {
 		request.getSession().setAttribute("transaction", transaction);
 
 		// show confirm transaction page
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return "redirect:/transfer-transaction-status";
 	}
 
 	@RequestMapping("/emailTransferProcess")
 	public String processEmailTransfer(Model m, HttpServletRequest request) {
 
+		Login l = loggedIn(m, request);
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if (l == null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
+		if (l==null) return "redirect:/login";
 
 		String emailOrAccountId = request.getParameter("eamilOrAccountId").trim();
 
@@ -129,9 +111,6 @@ public class TransactionController {
 		}
 		// create pending transactions
 		Transaction transaction = transactionService.validateWithinBankTransfer(request, l, m, account.getId()); // -1 multiplier
-																													// for
-																													// negative
-																													// transactions
 
 		if (transaction == null) {
 			m.addAttribute("status", "transfer fail");
@@ -144,7 +123,6 @@ public class TransactionController {
 		// show confirm transaction page
 		m.addAttribute("redirect", "./transfer-transaction-status");
 		m.addAttribute("customerServiceObject", customerService);
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return viewService.model(m).view("confirmEmailTransaction");
 
 		// return "redirect:/transfer-transaction-status";
@@ -153,14 +131,9 @@ public class TransactionController {
 	@RequestMapping("/transfer-transaction-status")
 	public String confirmTransferTransaction(Model m, HttpServletRequest request) {
 
+		Login l = loggedIn(m, request);
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if (l == null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
+		if (l==null) return "redirect:/login";
 
 		// show success or fail
 		if (!transactionService.finaliseWithinBankTransaction(request)) {
@@ -168,21 +141,15 @@ public class TransactionController {
 			return viewService.model(m).view("transactionStatus");
 		}
 		m.addAttribute("status", "transfer success");
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		return viewService.model(m).view("transactionStatus");
 	}
 
 	@RequestMapping("/transaction-status")
 	public String confirmTransaction(Model m, HttpServletRequest request) {
 
+		Login l = loggedIn(m, request);
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request);
-		if (l == null) {
-			// else show login page
-			m.addAttribute("login", new Login());
-			m.addAttribute("register", new Register());
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		}
+		if (l==null) return "redirect:/login";
 
 		// finalise transaction
 		boolean isSuccessful = transactionService
@@ -193,8 +160,65 @@ public class TransactionController {
 			m.addAttribute("status", "success");
 		else
 			m.addAttribute("status", "fail");
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
+		
 		return viewService.model(m).view("transactionStatus");
+	}
+	
+	@RequestMapping("/transfer/self")
+	public String showTransferSelf(Model m, HttpServletRequest request) {
+		
+		Login l = loggedIn(m, request);
+		// show home if the user is logged in
+		if (l==null) return "redirect:/login";
+		
+		m.addAttribute("accountsList", accountService.getAccountsList(l));
+		
+		return viewService.model(m).view("selfTransferForm");
+	}
+	
+	@RequestMapping("/transfer/by-email")
+	public String showTransferByEmail(Model m, HttpServletRequest request) {
+		
+		Login l = loggedIn(m, request);
+		// show home if the user is logged in
+		if (l==null) return "redirect:/login";
+		
+		m.addAttribute("accountsList", accountService.getAccountsList(l));
+		
+		return viewService.model(m).view("emailTransferForm");
+	}
+	
+	@RequestMapping("/transaction-details/{transactionId}")
+	public String transactionDetails(Model m, HttpServletRequest request, @PathVariable String transactionId) {
+		
+		Login l = loggedIn(m, request);
+		// show home if the user is logged in
+		if (l==null) return "redirect:/login";
+
+		// get transaction and store in request
+		Transaction t = transactionService.getTransaction(transactionId);
+		Account ac = accountService.getAccount(t.getFromAccountId());
+		m.addAttribute("transaction", t);
+		m.addAttribute("fromAccount", ac);
+		
+		// show transaction detail page
+		return viewService.model(m).view("transaction-details");
+	}
+	
+	public Login loggedIn(Model m, HttpServletRequest request) {
+		
+		// show home if the user is logged in
+		Login l = customerService.isLoggedIn(request);
+		if (l == null) {
+			// else show login page
+			m.addAttribute("login", new Login());
+			m.addAttribute("register", new Register());
+			m.addAttribute("message", "Please login first!");
+			return null;
+		}
+		m.addAttribute("customer", customerService.getCustomer(l));
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
+		return l;
 	}
 
 }

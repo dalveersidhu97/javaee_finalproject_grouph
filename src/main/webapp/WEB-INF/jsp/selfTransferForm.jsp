@@ -4,7 +4,7 @@
 
 <h2>Self transfer</h2>
 
-<form class="form" id="regForm" action="../selfTransferProcess"
+<form class="form col-md-8 m-auto" id="regForm" action="../selfTransferProcess"
 	method="post">
 
 	<jsp:include page="fromAccount.jsp"></jsp:include>

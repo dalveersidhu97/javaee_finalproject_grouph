@@ -1,5 +1,5 @@
 <!-- Navigation Bar -->
-<div class="col-sm-12 col-md-4">
+<div class="col-sm-12 col-md-4 col-lg-2">
 	<div class="list-group list-group-flush">
 		<a href="/finalproject_grouph"
 			class="list-group-item list-group-item-action">Home</a> 

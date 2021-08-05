@@ -3,7 +3,7 @@
 
 
 <h2>Sign up</h2>
-<form:form class="form" id="regForm" modelAttribute="register"
+<form:form class="form col-md-8 m-auto" id="regForm" modelAttribute="register"
 	action="registerProcess" method="post">
 
 	<div class="form-group">
@@ -38,16 +38,11 @@
 		<form:button class="form-control btn btn-primary" id="register"
 			name="register"> Register</form:button>
 	</div>
-	<form:errors path="username" />
-	<form:errors path="password" />
-	<form:errors path="firstName" />
-	<form:errors path="lastName" />
-	<form:errors path="email" />
 	<br>
-	<form:errors path="username" style="color:red;" />
+	<form:errors path="*" style="color:red;" />
 </form:form>
 
-<p class="text-center">${errorMessage}</p>
+<p class="text-center" style="color:red;">${errorMessage}</p>
 <p class="text-center">
 	Already registered? <a href="./login">Login</a>
 </p>

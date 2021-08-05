@@ -4,7 +4,7 @@
 
 
 <!-- Navigation Bar -->
-<div class="col-md-4 col-sm-12">
+<div class="col-md-4 col-sm-12 col-lg-2">
 	<div class="list-group list-group-flush">
 	
 	<h3  class='list-group-item list-group-item-action'>Services</h3>

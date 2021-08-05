@@ -4,12 +4,12 @@
 <!DOCTYPE html>
 <html>
 <%@ include file="head.jsp"%>
-<body>
+<body style="overflow-y: scroll">
 
 	<%@include file="header.jsp"%>
 
 	<!-- The flexible grid (content) -->
-	<div class="row" id="main_section">
+	<div class="row">
 
 		<%
 		if (request.getAttribute("login") != null) {
@@ -23,12 +23,12 @@
 		}
 		%>
 	
-		<div class="col-md-8">
-			<div class="container">
+		<div class="col-md-8 col-lg-7">
+			<div class="container-fulid">
 			
 				<%if(request.getAttribute("customer")!=null){ %>
 					<div class="col-lg-12" id="logout">
-						<p><a class="btn btn-primary active">${customer.firstName} ${customer.lastName}</a> <a href="./logout" class="btn btn-danger">Logout</a></p>
+						<p><a class="btn btn-primary active">${customer.firstName} ${customer.lastName}</a> <a href="/finalproject_grouph/logout" class="btn btn-danger">Logout</a></p>
 					</div>
 					<hr>
 				<%} %>

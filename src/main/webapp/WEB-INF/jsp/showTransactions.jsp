@@ -11,6 +11,7 @@
 		<th>Date</th>
 		<th>Amount</th>
 		<th>Status</th>
+		<th>Action</th>
 	</tr>
 	<%
 		List<Transaction> transactionsList = (List<Transaction>)request.getAttribute("tranactionsList");
@@ -25,6 +26,7 @@
 				out.print("<td>"+t.getCommitDate()+"</td>");
 				out.print("<td>"+t.getAmount()+"</td>");
 				out.print("<td>"+t.getStatus()+"</td>");
+				out.print("<td><a href='/finalproject_grouph/transaction-details/"+t.getId()+"'>Details</a></td>");
 			out.print("</tr>");
 		}
 	%>

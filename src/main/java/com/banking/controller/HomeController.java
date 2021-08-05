@@ -91,33 +91,5 @@ public class HomeController {
 		
 		return viewService.model(m).view("transaction");
 	}
-	
-	@RequestMapping("/transfer/self")
-	public String showTransferSelf(Model m, HttpServletRequest request) {
-		
-		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request, m);
-		if(l==null) 
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
-		m.addAttribute("customer", customerService.getCustomer(l));
-		m.addAttribute("accountsList", accountService.getAccountsList(l));
-		
-		return viewService.model(m).view("selfTransferForm");
-	}
-	
-	@RequestMapping("/transfer/by-email")
-	public String showTransferByEmail(Model m, HttpServletRequest request) {
-		
-		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request, m);
-		if(l==null) 
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
-		m.addAttribute("customer", customerService.getCustomer(l));
-		m.addAttribute("accountsList", accountService.getAccountsList(l));
-		
-		return viewService.model(m).view("emailTransferForm");
-	}
 
 }

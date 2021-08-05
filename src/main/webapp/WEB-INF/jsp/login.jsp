@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <h2>Login</h2>
-<form:form class="form" id="loginForm" modelAttribute="login"
+<form:form class="form col-md-8 m-auto" id="loginForm" modelAttribute="login"
 	action="loginProcess" method="post">
 	<div class="form-group">
 		<form:label path="username"> Username: </form:label>
@@ -20,12 +20,12 @@
 	</div>
 
 	<div class="form-group">
-		<form:errors path="username" />
-		<form:errors path="password" />
+		<form:errors path="username" style="color:red;" />
+		<form:errors path="password" style="color:red;" />
 	</div>
 
 </form:form>
-<p class="text-center">${errorMessage}</p>
+<p class="text-center" style="color:red;">${errorMessage}</p>
 <p class="text-center">${message}</p>
 <p class="text-center">
 	Not registered yet? <a href="./signup">Signup</a>

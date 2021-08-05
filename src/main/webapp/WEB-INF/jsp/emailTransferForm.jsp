@@ -4,7 +4,7 @@
 
 <h2>Email transfer</h2>
 
-<form class="form" id="regForm" action="../emailTransferProcess" method="post">
+<form class="form col-md-8 m-auto" id="regForm" action="../emailTransferProcess" method="post">
 		  
  	<jsp:include page="fromAccount.jsp"></jsp:include>
 

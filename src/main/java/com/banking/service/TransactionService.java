@@ -47,6 +47,10 @@ public class TransactionService implements TransactionServiceInterface {
 	public List<Transaction> getTransactionListByAccountId(int accountId) {
 		return transactionDao.getTransactionListByAccountId(accountId);
 	}
+	
+	public Transaction getTransaction(String transactionId) {
+		return transactionDao.getTransaction(transactionId);
+	}
 
 	// validate input fields and set error message in ModelAttribute object if Input
 	// is not valid
@@ -102,7 +106,7 @@ public class TransactionService implements TransactionServiceInterface {
 					return null; // empty required field
 				}
 				TransactionValue tValue = new TransactionValue();
-
+				
 				// set transaction option values
 				tValue.setOptionId(o.getId());
 				tValue.setOptionValue((String) request.getParameter(o.getInputName()));

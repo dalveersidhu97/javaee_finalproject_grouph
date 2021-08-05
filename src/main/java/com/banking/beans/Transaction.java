@@ -76,6 +76,7 @@ public class Transaction {
 		private int id;
 		private int optionId;
 		private String optionValue;
+		private String optionTitle;
 		private int transactionId;
 		
 		public int getId() {
@@ -102,7 +103,12 @@ public class Transaction {
 		public void setTransactionId(int transactionId) {
 			this.transactionId = transactionId;
 		}
-		
+		public String getOptionTitle() {
+			return optionTitle;
+		}
+		public void setOptionTitle(String optionTitle) {
+			this.optionTitle = optionTitle;
+		}
 		
 	}
 

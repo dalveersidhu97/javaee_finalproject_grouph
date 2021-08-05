@@ -13,16 +13,16 @@
 		if(valuesList!=null){
 			if(valuesList.size()!=0){
 				for(TransactionValue v : valuesList){
-					values += "<tr><th>"+uService.getCategoryOption(v.getOptionId()).getTitle()+"<th></td>"+v.getOptionValue()+"</tr>";
+					values += "<tr><th class='text-right'>"+uService.getCategoryOption(v.getOptionId()).getTitle()+"<th></td>"+v.getOptionValue()+"</tr>";
 				}	
 			}
 		}
 		
 	%>
 	<table class="table">
-		<tr><th>Refrence Id</th><td><%=t.getId()%></td></tr>
-		<tr><th>Amount</th><td><%=t.getAmount()%></td></tr>
-		<tr><th>Remark</th><td><%=t.getRemark()%></td></tr>
+		<tr><th class='text-right col-6'>Refrence Id</th><td><%=t.getId()%></td></tr>
+		<tr><th class='text-right'>Amount</th><td><%=t.getAmount()%></td></tr>
+		<tr><th class='text-right'>Remark</th><td><%=t.getRemark()%></td></tr>
 		<%=values %>
 	</table>
 	<a class="btn btn-primary container" href="<%=redirect%>">confirm</a>

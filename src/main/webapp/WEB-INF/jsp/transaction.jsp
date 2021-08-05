@@ -4,7 +4,7 @@
 
 <h2>${categoryName}</h2>
 
-<form class="form" id="regForm" action="../transactionProcess"
+<form class="form col-md-8 m-auto" id="regForm" action="../transactionProcess"
 	method="post">
 
 	<jsp:include page="fromAccount.jsp"></jsp:include>
