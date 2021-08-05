@@ -9,14 +9,10 @@
 	<%@include file="header.jsp"%>
 
 	<!-- The flexible grid (content) -->
-	<div class="row">
+	<div class="row container-fluid">
 
 		<%
-		if (request.getAttribute("login") != null) {
-		%>
-		<jsp:include page="nav.jsp" />
-		<%
-		} else {
+		if (request.getAttribute("customer") != null) {
 		%>
 		<jsp:include page="services.jsp" />
 		<%
