@@ -8,8 +8,6 @@
 
 	<%@include file="header.jsp"%>
 
-
-
 	<!-- The flexible grid (content) -->
 	<div class="row" id="main_section">
 
@@ -24,7 +22,7 @@
 		<%
 		}
 		%>
-
+	
 		<div class="col-md-8">
 			<div class="container">
 			
@@ -32,6 +30,7 @@
 					<div class="col-lg-12" id="logout">
 						<p><a class="btn btn-primary active">${customer.firstName} ${customer.lastName}</a> <a href="./logout" class="btn btn-danger">Logout</a></p>
 					</div>
+					<hr>
 				<%} %>
 				
 				<c:forEach var="view" items="${viewList}">
@@ -41,7 +40,7 @@
 		</div>
 
 	</div>
-
+	
 	<%@ include file="footer.jsp"%>
 
 </body>
