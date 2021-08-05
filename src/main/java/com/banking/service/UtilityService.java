@@ -14,10 +14,9 @@ import com.banking.dao.UtilityDao;
 /**
  * 
  * @author Group-H
- * @date 12 July, 2021
- * @description This class interact with userDao bean to provide a layer of
- *              abstraction.
- * 
+ * @date August 03, 2021
+ * @description UtilityService communicates with utilityDao performs all
+ *              the operations regarding Categories of transactions by using utilityDao
  */
 
 interface UtilityServiceInterface {

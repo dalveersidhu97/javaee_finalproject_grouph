@@ -1,5 +1,5 @@
 <!-- Header -->
 <div class="header">
-  <h1>Online Banking</h1>
+  <h1>Net Banking</h1>
   <p>Safe and secure.</p>
 </div>

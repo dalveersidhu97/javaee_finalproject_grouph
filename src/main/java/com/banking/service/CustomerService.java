@@ -14,13 +14,11 @@ import com.banking.dao.CustomerDao;
 /**
  * 
  * @author Group-H
- * @date 12 July, 2021
- * @description This class interact with userDao bean to provide a layer of
- *              abstraction.
- * 
+ * @date August 03, 2021
+ * @description CustomerService communicates with CustomerDao performs all the operations regarding customer by using CustomerDao
  */
 
-interface UserServiceInterface {
+interface CustomerServiceInterface {
 	
 	int register(Register customer);
 	Login validateLogin(Login login);
@@ -28,7 +26,7 @@ interface UserServiceInterface {
 	Customer getCustomerFromAccountId(int id);
 }
 
-public class CustomerService implements UserServiceInterface {
+public class CustomerService implements CustomerServiceInterface {
 	@Autowired
 	public CustomerDao customerDao;
 	@Autowired
@@ -56,11 +54,12 @@ public class CustomerService implements UserServiceInterface {
 		return customerDao.validateLogin(login);
 	}
 	
+	// return Login object if the user is logged in
 	public Login isLoggedIn(HttpServletRequest request) {
 		
 		Cookie[] cookies = request.getCookies();
 		
-		if(cookies == null) return null;
+		if(cookies == null) return null; // return null if there is no cookie
 		
 		String username = null, password = null;
 		
@@ -72,17 +71,18 @@ public class CustomerService implements UserServiceInterface {
 		}
 		
 		if(null==username || null==password || username.equals("") || password.equals(""))
-			return null;
-
+			return null; // null if user name and password are not set
+			
 		Login login = new Login();
 		login.setUsername(username);
 		login.setPassword(password);
-		Login l = validateLoginToken(login);
-		if(l!=null)
-			return l;
-		return null;
+		
+		// validate if user name and password and return login object or null
+		return validateLoginToken(login);
+		
 	}
 	
+	// return login object if the user is logged in else return null
 	public Login isLoggedIn(HttpServletRequest request, Model m) {
 		Login l = isLoggedIn(request);
 		if(l!=null) 
@@ -91,7 +91,7 @@ public class CustomerService implements UserServiceInterface {
 		m.addAttribute("register", new Register());
 		return null;
 	}
-
+	
 	public Customer getCustomer(Login login) {
 		return customerDao.getCustomer(login);
 	}

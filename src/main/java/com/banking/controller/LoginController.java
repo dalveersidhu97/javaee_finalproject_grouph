@@ -17,6 +17,15 @@ import com.banking.beans.Login;
 import com.banking.service.CustomerService;
 import com.banking.service.ViewService;
 
+/**
+ * 
+ * @author Group-H
+ * @date 03-07-2021
+ * @description LoginController is the route handler for all routes related
+ *              to user Login such as /login, /logout
+ * 
+ */
+
 @Controller
 public class LoginController {
 	
@@ -65,7 +74,6 @@ public class LoginController {
 		}
 		
 		// set cookies
-		
 		response.addCookie(new Cookie("username", login.getUsername()));
 		response.addCookie(new Cookie("firstname", customerService.getCustomer(l).getFirstName()));
 		response.addCookie(new Cookie("customerId", String.valueOf(login.getCustomerId())));

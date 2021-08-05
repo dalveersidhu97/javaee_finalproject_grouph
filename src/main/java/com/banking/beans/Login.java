@@ -2,6 +2,14 @@ package com.banking.beans;
 
 import javax.validation.constraints.Size;
 
+/**
+ * 
+ * @author Group-H
+ * @date 03-07-2021
+ * @description Login model for storing userId, user name and password.
+ * 
+ */
+
 public class Login {
 
 	private int customerId;

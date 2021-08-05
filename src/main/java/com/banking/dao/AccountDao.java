@@ -14,10 +14,24 @@ import com.banking.beans.Account;
 import com.banking.beans.Customer;
 import com.banking.beans.Login;
 
+
+/**
+ * 
+ * @author Group-H
+ * @date 03-07-2021
+ * @description AccountDao provides functionality for Getting and Inserting
+ *              information regarding Accounts from or to database such as
+ *              getting all Accounts List, get specific account
+ *              details, update account
+ * 
+ */
+
+
 public class AccountDao {
 
 	private JdbcTemplate template;
 	
+	// create accounts
 	public boolean createAccounts(Customer c, String[] accountTypes, float[] initialBalances) {
 		for(int i=0;i<accountTypes.length;i++) {
 			if(!createAccount(c, accountTypes[i], initialBalances[i]))
@@ -26,6 +40,7 @@ public class AccountDao {
 		return true;
 	}
 	
+	// create account
 	public boolean createAccount(Customer c, String accountType, float initialBalance) {
 		String sql = "INSERT INTO Accounts (customerID, accountType, balance) Values ("+c.getId()+", '"+accountType+"', "+initialBalance+");";
 		try {
@@ -38,7 +53,7 @@ public class AccountDao {
 		}
 		return false;
 	}
-	
+	// get list of all user accounts
 	public List<Account> getAccountsList(Login l) {
 		String sql = "select * from Accounts where customerID = "+l.getCustomerId()+";";
 		 return template.query(sql, new RowMapper<Account>(){  
@@ -56,6 +71,7 @@ public class AccountDao {
 		 });
 	}
 	
+	// this function will be reused for queries returning Account object
 	public Account getAccount(String sql) {
 		return template.query(sql,new ResultSetExtractor<Account>(){
 			public Account extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -73,25 +89,31 @@ public class AccountDao {
 		  });
 	}
 	
+	// get customer account
 	public Account getAccount(Login l, int accountId) {
 		String sql = "select * from Accounts where customerID = "+l.getCustomerId()+" and ID="+accountId+";";
 		return getAccount(sql);
 	}
 	
+	// get account by account id
 	public Account getAccount(int accountId) {
 		String sql = "select * from Accounts where ID="+accountId+";";
 		return getAccount(sql);
 	}
 	
+	// get account by email or account id
 	public Account getCustomerAccount(String emailOrAccountId, String type) {
 		String sql = "select * from Accounts a inner join Customers c on c.ID=a.customerID where accountType='"+type+"' and ( c.email='"+emailOrAccountId+"' or a.ID='"+emailOrAccountId+"');";
 		return getAccount(sql);
 	}
+	
+	// get Customer account by customer id and accoutn type
 	public Account getCustomerAccount(int customerId, String type) {
 		String sql = "select * from Accounts a inner join Customers c on c.ID=a.customerID where c.ID="+customerId+" and accountType='"+type+"';";
 		return getAccount(sql);
 	}
 	
+	// update account balance
 	public boolean updateBalanceBy(float amount, int accountId) {
 		String sql = "update Accounts set balance=balance+("+amount+") where ID="+accountId;
 		if(template.update(sql)==1)
@@ -99,6 +121,7 @@ public class AccountDao {
 		return false;
 	}
 	
+	// transfer between accounts
 	public boolean transferBalance(int fromAccountId, int toAccountId, float amount) {
 		if(!updateBalanceBy(-amount, fromAccountId)) 
 			return false;

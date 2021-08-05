@@ -1,5 +1,14 @@
 package com.banking.beans;
 
+/**
+ * 
+ * @author Group-H
+ * @date 03-07-2021
+ * @description Category Option Model for storing info about input fields of a transaction category.
+ * 		Such as inputName = amount, inputType = number, title = Enter amount and so on.
+ * 
+ */
+
 public class CategoryOption {
 
 	private int id;

@@ -3,6 +3,14 @@ package com.banking.beans;
 import java.sql.Date;
 import java.util.List;
 
+/**
+ * 
+ * @author Group-H
+ * @date 03-07-2021
+ * @description Model for general transaction table
+ * 
+ */
+
 public class Transaction {
 	
 	private int id;

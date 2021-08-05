@@ -13,13 +13,23 @@ import com.banking.beans.*;
 import com.banking.beans.Transaction.TransactionValue;
 import com.banking.dao.TransactionDao;
 
+/**
+ * 
+ * @author Group-H
+ * @date August 03, 2021
+ * @description TransactionService communicates with transactionDao performs all
+ *              the operations regarding transactions by using transactionDao
+ */
+
 interface TransactionServiceInterface {
 	public Transaction validateTransaction(HttpServletRequest request, Login l, Model m, String categoryName);
+
 	public Transaction createPendingTransaction(Transaction t);
+
 	public boolean finaliseTransaction(Transaction t);
 }
 
-public class TransactionService implements TransactionServiceInterface{
+public class TransactionService implements TransactionServiceInterface {
 
 	@Autowired
 	UtilityService utilityService;
@@ -29,25 +39,27 @@ public class TransactionService implements TransactionServiceInterface{
 	TransactionDao transactionDao;
 	@Autowired
 	CustomerService customerService;
-	
-	public List<Transaction> getTransactionListByCustomerId(int customerId, List<Account> accountList){
+
+	public List<Transaction> getTransactionListByCustomerId(int customerId, List<Account> accountList) {
 		return transactionDao.getTransactionListByCustomerId(customerId, accountList);
 	}
-	
-	public List<Transaction> getTransactionListByAccountId(int accountId){
+
+	public List<Transaction> getTransactionListByAccountId(int accountId) {
 		return transactionDao.getTransactionListByAccountId(accountId);
 	}
-	// validate input fields and set error message 
+
+	// validate input fields and set error message in ModelAttribute object if Input
+	// is not valid
 	public Transaction validateTransactionData(HttpServletRequest request, Login l, Model m, String categoryName) {
-	
+
 		try {
-			float amount = Float.parseFloat((String)request.getParameter("amount"));
-			amount = (amount<0)?-amount:amount; // absolute amount
-			amount = (categoryName.contains("eposit"))?amount:-amount; // temporary for deposit transactions
-			int accountId = Integer.parseInt((String)request.getParameter("accountId"));
-			
+			float amount = Float.parseFloat((String) request.getParameter("amount"));
+			amount = (amount < 0) ? -amount : amount; // absolute amount
+			amount = (categoryName.contains("eposit")) ? amount : -amount; // temporary for deposit transactions
+			int accountId = Integer.parseInt((String) request.getParameter("accountId"));
+
 			// check if the customer has enough amount
-			if(-amount > accountService.getAccountBalance(l, accountId)) {
+			if (-amount > accountService.getAccountBalance(l, accountId)) {
 				m.addAttribute("errorMessage", "Insufficient balance!");
 				return null; // insufficient balance
 			}
@@ -56,42 +68,54 @@ public class TransactionService implements TransactionServiceInterface{
 			transaction.setFromAccountId(accountId);
 			transaction.setAmount(amount);
 			transaction.setCustomerId(l.getCustomerId());
-			transaction.setRemark((String)request.getParameter("remark"));
+			transaction.setRemark((String) request.getParameter("remark"));
 			// add pending transaction to database
 			transaction.setStatus("pending");
 			return transaction;
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			m.addAttribute("errorMessage", "Incorrect input!");
 		}
 		return null;
 	}
-	
+
+	// Uses validateTransactionData to validate fields which are common for all
+	// transaction categories
+	// and validate
 	public Transaction validateTransaction(HttpServletRequest request, Login l, Model m, String categoryName) {
+
 		try {
+			// validate input fields which are common to all transaction categories
 			Transaction validatedTransaction = validateTransactionData(request, l, m, categoryName);
-			if(validatedTransaction==null) return null;
+
+			if (validatedTransaction == null)
+				return null;
+
 			List<CategoryOption> options = utilityService.getCategoryOptionsList(categoryName);
 			List<TransactionValue> valueList = new ArrayList<TransactionValue>();
-			
+
 			// get only those request attributes which belong to this transaction category
-			for(CategoryOption o : options) {
-	
-				if(!requestContains(o.getInputName(), request)) {
+			for (CategoryOption o : options) {
+
+				if (!requestContains(o.getInputName(), request)) {
 					m.addAttribute("errorMessage", "Please fill all the input fields!");
 					return null; // empty required field
 				}
 				TransactionValue tValue = new TransactionValue();
+
 				// set transaction option values
 				tValue.setOptionId(o.getId());
-				tValue.setOptionValue((String)request.getParameter(o.getInputName()));
+				tValue.setOptionValue((String) request.getParameter(o.getInputName()));
 				valueList.add(tValue); // add to value list
 			}
 			validatedTransaction.setTransactionValues(valueList);
+
 			// add pending transaction to database
 			validatedTransaction.setStatus("pending");
+
 			return createPendingTransaction(validatedTransaction);
-		}catch(Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 			m.addAttribute("errorMessage", "Incorrect input!");
 			return null;
@@ -101,40 +125,44 @@ public class TransactionService implements TransactionServiceInterface{
 	public boolean finaliseTransaction(Transaction t) {
 		return transactionDao.finaliseTransaction(t);
 	}
-	
+
 	public Transaction createPendingTransaction(Transaction t) {
 		return transactionDao.createPendingTransaction(t);
 	}
 
-	public WithinBankTransaction validateWithinBankTransfer(HttpServletRequest request, Login l, Model m, int toAccountId) {
+	// validate WithinBankTransaction
+	public WithinBankTransaction validateWithinBankTransfer(HttpServletRequest request, Login l, Model m,
+			int toAccountId) {
 		// verify fromAccount balance and toAcount account
-		Account fromAccount = accountService.getSelfAccount(l, Integer.parseInt((String)request.getParameter("accountId")));
+		Account fromAccount = accountService.getSelfAccount(l,
+				Integer.parseInt((String) request.getParameter("accountId")));
 		Account toAccount = accountService.getAccount(toAccountId);
-		
-		if(fromAccount==null || toAccount==null) {
+
+		if (fromAccount == null || toAccount == null) {
 			m.addAttribute("errorMessage", "Invalid account!");
 			return null;
 		}
 		Transaction vt = validateTransactionData(request, l, m, " ");
-		if(vt==null) return null;
+		if (vt == null)
+			return null;
 		// create pending transaction
 		WithinBankTransaction t = new WithinBankTransaction();
 		float amount = vt.getAmount();
-		amount = (amount<0)?-amount:amount; // absolute amount
+		amount = (amount < 0) ? -amount : amount; // absolute amount
 		t.setAmount(amount);
 		t.setRemark(vt.getRemark());
 		t.setFromAccountId(vt.getFromAccountId());
 		t.setCustomerId(vt.getCustomerId());
 		t.setToAccountId(toAccount.getId());
-		
+
 		return (WithinBankTransaction) createPendingTransaction(t);
 	}
-	
+
 	public Transaction validateSelfTransfer(HttpServletRequest request, Login l, Model m, float amountSign) {
-		int toAccountId = Integer.parseInt(request.getParameter("toAccountId"));		
+		int toAccountId = Integer.parseInt(request.getParameter("toAccountId"));
 		return validateWithinBankTransfer(request, l, m, toAccountId);
 	}
-	
+
 	public boolean finaliseWithinBankTransaction(HttpServletRequest request) {
 		WithinBankTransaction withinBankT = (WithinBankTransaction) request.getSession().getAttribute("transaction");
 		return transactionDao.finaliseWithinBankTransaction(withinBankT);
@@ -142,13 +170,16 @@ public class TransactionService implements TransactionServiceInterface{
 
 	// checks if the request has specified attribute
 	private boolean requestContains(String attribute, HttpServletRequest request) {
-		Enumeration attrs =  request.getParameterNames();
-		while(attrs.hasMoreElements()) {
-		    if(attrs.nextElement().equals(attribute)) {
-		    	if(!((String)request.getParameter(attribute)).trim().equals(""))
-		    		return true;
-		    	else return false;
-		    }
+
+		Enumeration attrs = request.getParameterNames();
+
+		while (attrs.hasMoreElements()) {
+			if (attrs.nextElement().equals(attribute)) {
+				if (!((String) request.getParameter(attribute)).trim().equals(""))
+					return true;
+				else
+					return false;
+			}
 		}
 		return false;
 	}

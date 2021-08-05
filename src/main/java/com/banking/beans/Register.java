@@ -2,18 +2,26 @@ package com.banking.beans;
 
 import javax.validation.constraints.Size;
 
+/**
+ * 
+ * @author Group-H
+ * @date 03-07-2021
+ * @description Model for User table
+ * 
+ */
+
 public class Register {
 
 	@Size(min=4, message="username must be greater than 4. ")
 	private String username;
-	@Size(min=8, message="username must be greater than 8. ")
+	@Size(min=8, message="Password must be greater than 8. ")
 	private String password;
 	private int Id;
-	@Size(min=3, message="username must be greater than 3. ")
+	@Size(min=3, message="Firstname must be greater than 3. ")
 	private String firstName;
-	@Size(min=3, message="username must be greater than 3. ")
+	@Size(min=3, message="Lastname must be greater than 3. ")
 	private String lastName;
-	@Size(min=5, message="username must be greater than 5. ")
+	@Size(min=5, message="Email must be greater than 5. ")
 	private String email;
 	
 	public int getId() {

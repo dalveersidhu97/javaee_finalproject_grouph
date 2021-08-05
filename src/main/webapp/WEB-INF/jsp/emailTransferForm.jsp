@@ -26,8 +26,8 @@
 		<input class="form-control btn btn-primary" type="submit" id="submit" value="Submit">
 	</div>
 </form>
-
+<br>
 <% 
 	if(request.getParameter("errorMessage")!=null)
-		out.print(request.getParameter("errorMessage"));
+		out.print("<p class='text-center'>"+request.getParameter("errorMessage")+"</p>");
 %>

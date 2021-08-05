@@ -1,5 +1,13 @@
 package com.banking.beans;
 
+/**
+ * 
+ * @author Group-H
+ * @date 03-07-2021
+ * @description User Account Model
+ * 
+ */
+
 public class Account {
 
 	private int id;

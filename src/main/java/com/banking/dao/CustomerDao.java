@@ -36,9 +36,42 @@ public class CustomerDao {
 	public EncryptionService enService;
 	@Autowired
 	public AccountDao accountDao;
-
-	public void setTemplate(JdbcTemplate template) {
-		this.template = template;
+	
+	// delete the customer if error to prevent user already exists message for register again
+	public void registerRollback(Register r) {
+		try {
+			template.execute("delete from Customers where email='"+r.getEmail()+"'");
+		}catch(Exception e) {e.printStackTrace();}
+	}
+	
+	// return customer object if email exists
+	public Customer emailExists(String email) {
+		String sql = "select * from Customers where email = '"+email+"';";
+		return getCustomer(sql);
+	}
+	
+	// return login if user name exists
+	public Login usernameExists(String username) {
+		String sql = "select * from Login where username = '"+username+"';";
+		return getLogin(sql);
+		
+	}
+	
+	// get customer object from accountID
+	public Customer getCustomerFromAccountId(int accountId) {
+		return getCustomer("select * from Customers c inner join Accounts a on c.ID=a.customerID where a.ID = "+accountId);
+	}
+	
+	// get login object
+	public Customer getCustomer(Login l) {
+		return getCustomer("select * from Customers c inner join Login l on l.customerID=c.ID where username = '"+l.getUsername()+"' and password='"+l.getPassword()+"';");
+	}
+	
+	// validate the user for login
+	public Login validateLogin(Login l) {
+		String sql = "select * from Login where username='" + l.getUsername() + "' and password='"
+				+ l.getPassword() + "';";
+		return getLogin(sql);
 	}
 	
 	public int register(Register r) {
@@ -87,38 +120,7 @@ public class CustomerDao {
 		return NO_ROW_EFFECTED;
 	}
 	
-	public void registerRollback(Register r) {
-		try {
-			template.execute("delete from Customers where email='"+r.getEmail()+"'");
-		}catch(Exception e) {e.printStackTrace();}
-	}
-	
-	public Customer emailExists(String email) {
-		String sql = "select * from Customers where email = '"+email+"';";
-		return getCustomer(sql);
-	}
-	
-	public Login usernameExists(String username) {
-		String sql = "select * from Login where username = '"+username+"';";
-		return getLogin(sql);
-		
-	}
-	
-	public Customer getCustomerFromAccountId(int accountId) {
-		return getCustomer("select * from Customers c inner join Accounts a on c.ID=a.customerID where a.ID = "+accountId);
-	}
-	
-	public Customer getCustomer(Login l) {
-		return getCustomer("select * from Customers c inner join Login l on l.customerID=c.ID where username = '"+l.getUsername()+"' and password='"+l.getPassword()+"';");
-	}
-	
-	public Login validateLogin(Login l) {
-		String sql = "select * from Login where username='" + l.getUsername() + "' and password='"
-				+ l.getPassword() + "';";
-		return getLogin(sql);
-	}
-	
-
+	// Get the customer object by running sql ... this function will be reused for getting Customer object for any sql query
 	public Customer getCustomer(String sql){  
 		 return template.query(sql,new ResultSetExtractor<Customer>(){
 			public Customer extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -137,6 +139,7 @@ public class CustomerDao {
 		  });    
 	}
 	
+	// reusable function for getting Login by running sql
 	public Login getLogin(String sql) {
 		try {
 			return template.query(sql, new ResultSetExtractor<Login>() {
@@ -155,6 +158,10 @@ public class CustomerDao {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void setTemplate(JdbcTemplate template) {
+		this.template = template;
 	}
 	
 }

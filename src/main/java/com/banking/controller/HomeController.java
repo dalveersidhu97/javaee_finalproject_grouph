@@ -28,8 +28,7 @@ import com.banking.service.ViewService;
  * 
  * @author Group-H
  * @date 12 July, 2021
- * @description Controller class for root routes such as '/', '/welcome',
- *              '/logout'. It checks if the user is logged In and serves the
+ * @description Controller class for root routes such as '/', '/welcome'. It checks if the user is logged In and serves the
  *              profile page or login page accordingly.
  */
 
@@ -52,10 +51,10 @@ public class HomeController {
 		
 		List<String> viewList = new ArrayList<String>(Arrays.asList("home"));
 		
-		// show home if the user is logged in
+		// show login if the user is not logged in
 		Login l = customerService.isLoggedIn(request, m);
 		if(l==null) 
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
+			return viewService.model(m).views(Arrays.asList("login"));
 		
 		List<Account> accountList = accountService.getAccountsList(l);
 		

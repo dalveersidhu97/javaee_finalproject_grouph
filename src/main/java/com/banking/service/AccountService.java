@@ -2,14 +2,17 @@ package com.banking.service;
 
 import java.util.List;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.banking.beans.*;
 import com.banking.dao.*;
 
+/**
+ * 
+ * @author Group-H
+ * @date 12 July, 2021
+ * @description AccountService communicated with AccountDao and performs the operations regarding account by using accountDao
+ */
 
 public class AccountService {
 	@Autowired

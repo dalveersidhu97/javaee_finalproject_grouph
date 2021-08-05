@@ -2,6 +2,14 @@ package com.banking.beans;
 
 import javax.validation.constraints.Size;
 
+/**
+ * 
+ * @author Group-H
+ * @date 03-07-2021
+ * @description Customer model stores customer's information
+ * 
+ */
+
 public class Customer {
 
 	private int Id;
