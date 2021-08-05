@@ -51,20 +51,16 @@ public class HomeController {
 		
 		List<String> viewList = new ArrayList<String>(Arrays.asList("home"));
 		
-		// show login if the user is not logged in
-		Login l = customerService.isLoggedIn(request, m);
-		if(l==null) 
-			return viewService.model(m).views(Arrays.asList("login"));
+		Login l = loggedIn(m, request);
+		// show home if the user is logged in
+		if (l==null) return "redirect:/login";
 		
+		// get customer accounts list
 		List<Account> accountList = accountService.getAccountsList(l);
-		
-		// get details for the logged in user
-		m.addAttribute("customer", customerService.getCustomer(l));
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		m.addAttribute("accountsList", accountList);
 		
+		// get transactions list
 		List<Transaction> tranactionList = transactionService.getTransactionListByCustomerId(l.getCustomerId(), accountList);
-		
 		if(tranactionList.size()>0) {
 			m.addAttribute("tranactionsList", tranactionList);
 			viewList.add("showTransactions");
@@ -76,20 +72,31 @@ public class HomeController {
 	@RequestMapping("/categories/{categoryName}")
 	public String showHome(Model m, HttpServletRequest request, @PathVariable String categoryName) {
 		
+		Login l = loggedIn(m, request);
 		// show home if the user is logged in
-		Login l = customerService.isLoggedIn(request, m);
-		if(l==null) 
-			return viewService.model(m).views(Arrays.asList("login", "signup"));
+		if (l==null) return "redirect:/login";
 		
 		String category = String.join(" ", categoryName.split("-"));
-		
-		m.addAttribute("customer", customerService.getCustomer(l));
 		m.addAttribute("categoryName", category);
-		m.addAttribute("categoriesList", utilityService.getCategoryList());
 		m.addAttribute("optionsList", utilityService.getCategoryOptionsList(category));
 		m.addAttribute("accountsList", accountService.getAccountsList(l));
 		
 		return viewService.model(m).view("transaction");
 	}
-
+	
+	public Login loggedIn(Model m, HttpServletRequest request) {
+		
+		// show home if the user is logged in
+		Login l = customerService.isLoggedIn(request);
+		if (l == null) {
+			// else show login page
+			m.addAttribute("login", new Login());
+			m.addAttribute("register", new Register());
+			m.addAttribute("message", "Please login first!");
+			return null;
+		}
+		m.addAttribute("customer", customerService.getCustomer(l));
+		m.addAttribute("categoriesList", utilityService.getCategoryList());
+		return l;
+	}
 }
