@@ -4,18 +4,9 @@
 	width:70%;
 	
 }
-col-* {}
-#container
-{
-	margin-top:2%;
-	padding: 10px 20px;
-}
 
-#container>h2
-{
-	text-align:center;
-	margin-top:2%;
-}
+h2, h1, h3 {text-align: center;}
+
 input,button, select
 {
 	height:50px !important;

@@ -46,7 +46,8 @@ public class RegisterController {
 
 		String view = "signup";
 		String errorMessage = "";
-
+		m.addAttribute("login", new Login());
+		
 		if (br.hasErrors())
 			return viewService.model(m).view(view);
 
@@ -60,17 +61,18 @@ public class RegisterController {
 
 		if (registerResutl == CustomerDao.USER_ALREADY_EXISTS)
 			errorMessage = "Customer already exists, please check your input!";
+		
 		if (registerResutl == CustomerDao.NO_ROW_EFFECTED)
 			errorMessage = "An error has accured! Please try again.";
 
 		if (registerResutl == 1) {
 			m.addAttribute("message", "Registration successfull, You can login now!");
-			m.addAttribute("login", new Login());
 			view = "login";
+		}else {
+			m.addAttribute("register", register);
 		}
 
 		m.addAttribute("errorMessage", errorMessage);
-
 		return viewService.model(m).view(view);
 	}
 

@@ -144,6 +144,7 @@ public class CustomerDao {
 		try {
 			return template.query(sql, new ResultSetExtractor<Login>() {
 				public Login extractData(ResultSet rs) throws SQLException, DataAccessException {
+
 					if(rs.next()) {
 						Login l = new Login();
 						l.setCustomerId(rs.getInt("customerID"));

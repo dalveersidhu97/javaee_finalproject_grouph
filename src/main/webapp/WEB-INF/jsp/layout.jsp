@@ -25,10 +25,15 @@
 		}
 		%>
 
-
-
-		<div class="col-sm-8 col-lg-7">
-			<div class="col-sm-12 col-lg-12" id="container">
+		<div class="col-md-8">
+			<div class="container">
+			
+				<%if(request.getAttribute("customer")!=null){ %>
+					<div class="col-lg-12" id="logout">
+						<p><a class="btn btn-primary active">${customer.firstName} ${customer.lastName}</a> <a href="./logout" class="btn btn-danger">Logout</a></p>
+					</div>
+				<%} %>
+				
 				<c:forEach var="view" items="${viewList}">
 					<jsp:include page="${view}" />
 				</c:forEach>
