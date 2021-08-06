@@ -137,6 +137,7 @@ public class TransactionService implements TransactionServiceInterface {
 	// validate WithinBankTransaction
 	public WithinBankTransaction validateWithinBankTransfer(HttpServletRequest request, Login l, Model m,
 			int toAccountId) {
+		
 		// verify fromAccount balance and toAcount account
 		Account fromAccount = accountService.getSelfAccount(l,
 				Integer.parseInt((String) request.getParameter("accountId")));
@@ -163,6 +164,13 @@ public class TransactionService implements TransactionServiceInterface {
 	}
 
 	public Transaction validateSelfTransfer(HttpServletRequest request, Login l, Model m, float amountSign) {
+		
+		if(!requestContains("toAccountId", request) || !requestContains("accountId", request)) {
+			m.addAttribute("errorMessage", "Select account!");
+			return null;
+		}
+		
+		
 		int toAccountId = Integer.parseInt(request.getParameter("toAccountId"));
 		return validateWithinBankTransfer(request, l, m, toAccountId);
 	}

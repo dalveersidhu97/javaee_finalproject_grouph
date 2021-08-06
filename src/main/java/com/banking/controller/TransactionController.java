@@ -101,9 +101,14 @@ public class TransactionController {
 		Login l = loggedIn(m, request);
 		// show home if the user is logged in
 		if (l==null) return "redirect:/login";
-
+		
+		// if no account selected show error
+		if(request.getAttribute("accountId")==null || request.getAttribute("accountId").equals("")) {
+			m.addAttribute("errorMessage", "Select account!");
+			return "redirect:/transfer/by-email";
+		}
 		String emailOrAccountId = request.getParameter("eamilOrAccountId").trim();
-
+		
 		Account account = accountService.getCustomerAccount(emailOrAccountId, "Savings");
 		if (account == null) {
 			m.addAttribute("errorMessage", "Invalid email or account number");
