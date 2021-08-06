@@ -92,7 +92,6 @@ public class HomeController {
 			// else show login page
 			m.addAttribute("login", new Login());
 			m.addAttribute("register", new Register());
-			m.addAttribute("message", "Please login first!");
 			return null;
 		}
 		m.addAttribute("customer", customerService.getCustomer(l));

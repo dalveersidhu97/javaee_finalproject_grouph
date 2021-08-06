@@ -39,7 +39,7 @@ public class LoginController {
 	public String showLogin(Model m, HttpServletRequest request) {
 		
 		Login l = customerService.isLoggedIn(request);
-		if(l==null) 
+		if(l!=null) 
 			// redirect to home if already logged in
 			return "redirect:/";
 		
